@@ -6,8 +6,8 @@ const upload = require('../middleware/upload');
 const router = express.Router();
 
 router.route('/')
-  .post(protect, upload.array('media', 5), createIncident)
-  .get(protect, authorize('DISPATCHER', 'ADMIN'), getIncidents);
+  .post(upload.array('media', 5), createIncident)
+  .get(getIncidents);
 
 router.route('/:id')
   .get(protect, getIncidentById);

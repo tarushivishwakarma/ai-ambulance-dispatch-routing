@@ -1,50 +1,76 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @theme {
   /* Brand Typography */
-  --font-sans: 'Inter', 'Geist', 'Manrope', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
 
-  /* Light Emergency Operations Palette */
-  --color-primary-900: #F8FAFC; /* Page background */
-  --color-primary-800: #FFFFFF; /* Cards/Containers */
-  --color-primary-700: #E2E8F0; /* Borders */
-  --color-primary-600: #CBD5E1; /* Muted elements */
+  /* Warm Graphite Enterprise Palette */
+  --color-primary-900: #101214;   /* Page background */
+  --color-primary-800: #171A1D;   /* Surface */
+  --color-primary-700: #1D2125;   /* Surface Elevated */
+  --color-primary-600: #2A3035;   /* Borders / muted */
 
   /* Semantic Colors */
-  --color-emergency: #E53935;
-  --color-emergency-hover: #D32F2F;
-  
-  --color-operational: #16A34A;
-  --color-info: #0284C7;
-  --color-warning: #D97706;
+  --color-emergency: #C95A54;
+  --color-emergency-hover: #D34B4B; /* Critical */
 
-  /* Text Colors */
-  --color-text-main: #0F172A;
-  --color-text-muted: #475569;
+  --color-operational: #4FA39A;
+  --color-operational-hover: #4E9F73; /* Success */
+  --color-info: #5E91B0;
+  --color-warning: #D6A84F;
+
+  /* Text Colors – always legible on dark backgrounds */
+  --color-text-main: #F3F4F1;
+  --color-text-muted: #89939A;
+  --color-text-secondary: #B8C0C5;
 }
 
 @layer base {
   body {
     @apply bg-primary-900 text-text-main font-sans antialiased overflow-x-hidden;
   }
+  * {
+    box-sizing: border-box;
+  }
 }
 
-/* Custom Scrollbar for professional look */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #0B1628; }
+::-webkit-scrollbar-thumb { background: #1A2F4A; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #243D5C; }
+
+/* Leaflet Map Popups */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #0F1E35 !important;
+  color: #F1F5F9 !important;
+  border: 1px solid #1A2F4A !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
 }
-::-webkit-scrollbar-track {
-  @apply bg-primary-900;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-primary-700 rounded-full;
-}
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary-600;
+.leaflet-popup-content-wrapper {
+  border-radius: 6px !important;
 }
 
-/* Map Popups Override */
-.leaflet-popup-content-wrapper, .leaflet-popup-tip {
-  @apply !bg-primary-800 !text-text-main border !border-primary-700;
+/* Leaflet attribution */
+.leaflet-control-attribution {
+  background: rgba(11, 22, 40, 0.8) !important;
+  color: #94A3B8 !important;
+  font-size: 9px !important;
+}
+.leaflet-control-attribution a {
+  color: #38BDF8 !important;
+}
+
+/* Map container fix */
+.leaflet-container {
+  background: #0a1020 !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* Select option fix for dark mode */
+option {
+  background-color: #0F1E35;
+  color: #F1F5F9;
 }

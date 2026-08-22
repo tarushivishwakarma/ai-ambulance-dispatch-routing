@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.route('/')
   .post(protect, authorize('ADMIN'), createAmbulance)
-  .get(protect, authorize('DISPATCHER', 'ADMIN'), getAmbulances);
+  .get(getAmbulances);
 
 router.route('/:id/location')
   .patch(protect, authorize('DRIVER', 'ADMIN'), updateLocation);

@@ -15,8 +15,10 @@ const createIncident = async (req, res, next) => {
       });
     }
 
+    const incidentId = 'INC-NEW-' + Math.floor(100000 + Math.random() * 900000);
     const incident = await Incident.create({
-      reportedBy: req.user._id,
+      incidentId: incidentId,
+      reportedBy: req.user ? req.user._id : undefined, // allow unauth for demo
       category,
       description,
       location: {
@@ -28,6 +30,40 @@ const createIncident = async (req, res, next) => {
       affectedPeople: affectedPeople ? parseInt(affectedPeople) : undefined,
       isMedicalEmergency: isMedicalEmergency === 'true' || isMedicalEmergency === true
     });
+
+    try {
+      const axios = require('axios');
+      const aiRes = await axios.post('http://localhost:8000/api/ai/analyze', {
+        incidentId: incident._id.toString(),
+        description: incident.description,
+        category: incident.category
+      });
+      
+      if (aiRes.data && aiRes.data.success) {
+        const result = aiRes.data.data;
+        const AIAnalysis = require('../models/AIAnalysis');
+        await AIAnalysis.create({
+          incident: incident._id,
+          severityScore: result.recommendedSeverity || incident.severity,
+          confidence: result.confidenceScore || 0.85,
+          recommendedAmbulanceType: result.recommendedAmbulanceType || 'ALS',
+          medicalAssessment: result.reasoning || 'Analysis complete',
+          isGemini: result.isGemini !== false
+        });
+        
+        // Update incident with AI fields
+        incident.severity = result.recommendedSeverity || incident.severity;
+        incident.aiConfidence = result.confidenceScore || 0.85;
+        incident.source = result.isGemini === false ? 'DEMO AI' : 'GEMINI AI';
+        await incident.save();
+      }
+    } catch (aiError) {
+      console.error("AI Analysis failed:", aiError.message);
+      // Fallback to DEMO AI if python server fails completely
+      incident.source = 'DEMO AI';
+      incident.aiConfidence = 0.75;
+      await incident.save();
+    }
 
     // Notify connected clients via Socket.IO
     req.io.emit('incident:created', incident);

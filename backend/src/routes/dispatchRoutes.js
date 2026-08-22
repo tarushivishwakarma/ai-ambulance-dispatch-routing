@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.post('/recommend', protect, authorize('DISPATCHER', 'ADMIN'), recommendDispatch);
 router.post('/assign', protect, authorize('DISPATCHER', 'ADMIN'), assignDispatch);
-router.get('/active', protect, authorize('DISPATCHER', 'ADMIN', 'DRIVER'), getActiveDispatches);
+router.get('/active', getActiveDispatches);
 
 module.exports = router;

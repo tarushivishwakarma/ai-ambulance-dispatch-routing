@@ -5,7 +5,7 @@ const { protect, authorize } = require('../middleware/auth');
 const router = express.Router();
 
 router.post('/', protect, authorize('ADMIN'), createHospital);
-router.get('/', protect, getHospitals);
+router.get('/', getHospitals);
 router.post('/match', protect, authorize('DISPATCHER', 'ADMIN'), matchHospitals);
 
 module.exports = router;

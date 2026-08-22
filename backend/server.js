@@ -73,6 +73,30 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, message: 'API is running' });
 });
 
+app.get('/api/alerts', async (req, res) => {
+  try {
+    const Alert = require('./src/models/Alert');
+    const alerts = await Alert.find({});
+    res.status(200).json({ success: true, count: alerts.length, data: alerts });
+  } catch (err) { res.status(500).json({ success: false }); }
+});
+
+app.get('/api/roads', async (req, res) => {
+  try {
+    const RoadCondition = require('./src/models/RoadCondition');
+    const roads = await RoadCondition.find({});
+    res.status(200).json({ success: true, count: roads.length, data: roads });
+  } catch (err) { res.status(500).json({ success: false }); }
+});
+
+app.get('/api/historical', async (req, res) => {
+  try {
+    const IncidentHistory = require('./src/models/IncidentHistory');
+    const history = await IncidentHistory.find({});
+    res.status(200).json({ success: true, count: history.length, data: history });
+  } catch (err) { res.status(500).json({ success: false }); }
+});
+
 // Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
