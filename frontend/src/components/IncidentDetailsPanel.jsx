@@ -16,11 +16,11 @@ const TimelineStep = ({ title, time, active, isLast, icon: Icon, completed }) =>
     <div className="pt-1">
       <h4 className={`text-xs font-bold uppercase tracking-wider ${completed ? 'text-operational' : active ? 'text-info' : 'text-text-muted'}`}>{title}</h4>
       {time ? (
-        <span className="text-[10px] text-slate-400 font-mono mt-0.5 block">
+        <span className="text-[10px] text-text-muted font-mono mt-0.5 block">
           {new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       ) : (
-        <span className="text-[10px] text-primary-600 font-mono mt-0.5 block">--:--</span>
+        <span className="text-[10px] text-primary-500 font-mono mt-0.5 block">--:--</span>
       )}
     </div>
   </div>
@@ -58,15 +58,15 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-y-0 right-0 w-[400px] bg-primary-900 border-l border-primary-700/50 shadow-2xl z-[100] flex flex-col"
+        className="fixed inset-y-0 right-0 w-[400px] bg-primary-800 border-l border-primary-700 shadow-2xl z-[100] flex flex-col"
       >
         {/* Header */}
-        <div className="h-16 border-b border-primary-700/50 flex items-center justify-between px-5 bg-primary-800/80 backdrop-blur-sm">
+        <div className="h-16 border-b border-primary-700 flex items-center justify-between px-5 bg-primary-800">
           <div className="flex items-center gap-2">
             <ShieldAlert size={16} className={incident.severity >= 9 ? 'text-emergency' : 'text-warning'} />
-            <span className="text-xs font-bold text-white uppercase tracking-widest">Incident Details</span>
+            <span className="text-xs font-bold text-text-main uppercase tracking-widest">Incident Details</span>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-primary-700/50 rounded-full text-text-muted hover:text-white transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-primary-600 rounded-full text-text-muted hover:text-text-main transition-colors">
             <X size={16} />
           </button>
         </div>
@@ -86,8 +86,8 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
                   {incident.status.replace('_', ' ')}
                 </span>
               </div>
-              <h2 className="text-xl font-black text-white">{incident.category.replace(/_/g, ' ')}</h2>
-              <div className="flex items-center gap-1.5 text-[11px] text-slate-400 mt-2">
+              <h2 className="text-xl font-black text-text-main">{incident.category.replace(/_/g, ' ')}</h2>
+              <div className="flex items-center gap-1.5 text-[11px] text-text-muted mt-2">
                 <MapPin size={12} /> {incident.address || `${incident.city}, ${incident.state || 'India'}`}
               </div>
             </div>
@@ -99,9 +99,9 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
                   {incident.severity}/10
                 </span>
               </div>
-              <div className="bg-primary-800 border border-primary-700 rounded p-3">
+              <div className="bg-primary-800 border border-primary-700 rounded p-3 shadow-sm">
                 <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest block mb-1">Affected</span>
-                <span className="text-lg font-black text-white">{incident.affectedPeople || 'Unknown'}</span>
+                <span className="text-lg font-black text-text-main">{incident.affectedPeople || 'Unknown'}</span>
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
               <h3 className="text-[10px] font-bold text-info uppercase tracking-widest flex items-center gap-1.5 mb-3">
                 <BrainCircuit size={12} /> AI Assessment
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed italic border-l-2 border-info/40 pl-3">
+              <p className="text-xs text-text-secondary leading-relaxed italic border-l-2 border-info/40 pl-3">
                 "{incident.description || 'Medical emergency reported. AI has verified details and suggested dispatch.'}"
               </p>
               <div className="pt-2 flex justify-between items-center text-[10px] font-bold text-text-muted">

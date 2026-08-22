@@ -40,14 +40,14 @@ const LoginPage = () => {
         {/* Branding overlay */}
         <div className="absolute bottom-10 left-10 right-10">
           <div className="flex items-center gap-3 mb-4">
-            <img src="/logo.svg" alt="AI Dispatch" className="h-10 w-10" />
+            <img src="/logo.svg" alt="AI Dispatch" className="h-10 w-10 drop-shadow-sm" />
             <div>
-              <h2 className="text-white font-black tracking-widest text-lg uppercase">AI Dispatch</h2>
-              <p className="text-slate-400 text-[11px] tracking-widest uppercase">Emergency Operations Network</p>
+              <h2 className="text-text-main font-black tracking-widest text-lg uppercase drop-shadow-sm">AI Dispatch</h2>
+              <p className="text-text-main text-[11px] tracking-widest uppercase font-bold drop-shadow-sm">Emergency Operations Network</p>
             </div>
           </div>
-          <div className="bg-black/40 backdrop-blur-md border border-white/10 rounded-xl p-5">
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">System Status</p>
+          <div className="bg-primary-800/90 border border-primary-700 rounded-xl p-5 shadow-sm">
+            <p className="text-xs font-bold uppercase tracking-wider text-text-muted mb-3">System Status</p>
             <div className="flex flex-col gap-2">
               {[
                 { label: 'AI Service', status: 'Demo AI Active', color: 'text-warning' },
@@ -55,7 +55,7 @@ const LoginPage = () => {
                 { label: 'Hospital Network', status: 'Connected', color: 'text-operational' },
               ].map(item => (
                 <div key={item.label} className="flex justify-between items-center text-[11px]">
-                  <span className="text-slate-400 font-medium">{item.label}</span>
+                  <span className="text-text-secondary font-medium">{item.label}</span>
                   <span className={`font-bold ${item.color} flex items-center gap-1`}>
                     <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
                     {item.status}
@@ -73,7 +73,7 @@ const LoginPage = () => {
         {/* Back to Landing */}
         <Link
           to="/"
-          className="absolute top-6 left-6 flex items-center gap-2 text-text-muted hover:text-white text-[11px] font-bold uppercase tracking-widest transition-colors group"
+          className="absolute top-6 left-6 flex items-center gap-2 text-text-muted hover:text-text-main text-[11px] font-bold uppercase tracking-widest transition-colors group"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
           Back to Landing
@@ -87,7 +87,7 @@ const LoginPage = () => {
               <Shield size={20} className="text-emergency" />
               <span className="text-[11px] font-bold uppercase tracking-widest text-emergency">Authority Access</span>
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight">Authorized<br />Dashboard Access</h1>
+            <h1 className="text-3xl font-black text-text-main tracking-tight">Authorized<br />Dashboard Access</h1>
             <p className="text-sm text-text-muted leading-relaxed">
               Enter the AI Dispatch Emergency Operations Center demo environment.
             </p>
@@ -98,7 +98,7 @@ const LoginPage = () => {
             <AlertTriangle size={16} className="text-warning flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-xs font-bold text-warning uppercase tracking-wider mb-1">Demo Mode Active</p>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
+              <p className="text-[11px] text-text-secondary leading-relaxed">
                 Running with synthetic Pan-India data. No real credentials required.
               </p>
             </div>
@@ -118,7 +118,7 @@ const LoginPage = () => {
                 <input 
                   type="text" 
                   defaultValue="dispatcher@operations.local"
-                  className="w-full bg-primary-800/80 border border-primary-600 rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-operational transition-colors"
+                  className="w-full bg-primary-800 border border-primary-600 rounded px-4 py-2.5 text-sm text-text-main focus:outline-none focus:border-operational transition-colors shadow-sm"
                 />
               </div>
               <div>
@@ -126,7 +126,7 @@ const LoginPage = () => {
                 <input 
                   type="password" 
                   defaultValue="password"
-                  className="w-full bg-primary-800/80 border border-primary-600 rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-operational transition-colors"
+                  className="w-full bg-primary-800 border border-primary-600 rounded px-4 py-2.5 text-sm text-text-main focus:outline-none focus:border-operational transition-colors shadow-sm"
                 />
               </div>
             </div>
@@ -134,7 +134,7 @@ const LoginPage = () => {
             <button
               onClick={handleDemoLogin}
               disabled={isSubmitting}
-              className="w-full py-3 mt-4 bg-primary-600 hover:bg-primary-700 text-white font-bold uppercase tracking-widest rounded transition-all disabled:opacity-50 text-xs"
+              className="w-full py-3 mt-4 bg-primary-700 hover:bg-primary-600 text-text-main font-bold uppercase tracking-widest rounded transition-all disabled:opacity-50 text-xs shadow-sm"
             >
               Sign In
             </button>

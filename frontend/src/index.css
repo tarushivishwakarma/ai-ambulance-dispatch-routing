@@ -5,25 +5,38 @@
   /* Brand Typography */
   --font-sans: 'Inter', system-ui, sans-serif;
 
-  /* Warm Graphite Enterprise Palette */
-  --color-primary-900: #101214;   /* Page background */
-  --color-primary-800: #171A1D;   /* Surface */
-  --color-primary-700: #1D2125;   /* Surface Elevated */
-  --color-primary-600: #2A3035;   /* Borders / muted */
+  /* LIGHT ENTERPRISE EMERGENCY OPERATIONS THEME */
+  
+  /* Backgrounds & Surfaces */
+  --color-bg-page: #F7F8FA;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-surface-secondary: #F1F3F5;
+  --color-bg-surface-elevated: #FFFFFF;
+  
+  /* Borders */
+  --color-border: #E2E6EA;
+  
+  /* Typography */
+  --color-text-main: #172026;
+  --color-text-secondary: #46515A;
+  --color-text-muted: #66727C;
+  --color-text-disabled: #8D979F;
+  
+  /* Brand & Operations */
+  --color-brand-primary: #315E72;
+  --color-brand-primary-hover: #264B5C;
+  --color-operational: #2F7D5A;  /* Success / Available / Resolved */
+  --color-warning: #B98224;      /* Warning / Delay */
+  --color-emergency: #C94B45;    /* Emergency / Critical */
+  --color-critical: #B83D3D;     /* Redundant Critical */
+  --color-info: #477A9C;         /* Info / En Route / General */
 
-  /* Semantic Colors */
-  --color-emergency: #C95A54;
-  --color-emergency-hover: #D34B4B; /* Critical */
-
-  --color-operational: #4FA39A;
-  --color-operational-hover: #4E9F73; /* Success */
-  --color-info: #5E91B0;
-  --color-warning: #D6A84F;
-
-  /* Text Colors – always legible on dark backgrounds */
-  --color-text-main: #F3F4F1;
-  --color-text-muted: #89939A;
-  --color-text-secondary: #B8C0C5;
+  /* Legacy semantic mappings */
+  --color-primary-900: var(--color-bg-page);
+  --color-primary-800: var(--color-bg-surface);
+  --color-primary-700: var(--color-border);
+  --color-primary-600: var(--color-bg-surface-secondary);
+  --color-primary-500: var(--color-brand-primary);
 }
 
 @layer base {
@@ -36,18 +49,18 @@
 }
 
 /* Custom Scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: #0B1628; }
-::-webkit-scrollbar-thumb { background: #1A2F4A; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: #243D5C; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg-page); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-disabled); }
 
 /* Leaflet Map Popups */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: #0F1E35 !important;
-  color: #F1F5F9 !important;
-  border: 1px solid #1A2F4A !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+  background: var(--color-bg-surface) !important;
+  color: var(--color-text-main) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
 }
 .leaflet-popup-content-wrapper {
   border-radius: 6px !important;
@@ -55,22 +68,22 @@
 
 /* Leaflet attribution */
 .leaflet-control-attribution {
-  background: rgba(11, 22, 40, 0.8) !important;
-  color: #94A3B8 !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: var(--color-text-muted) !important;
   font-size: 9px !important;
 }
 .leaflet-control-attribution a {
-  color: #38BDF8 !important;
+  color: var(--color-brand-primary) !important;
 }
 
 /* Map container fix */
 .leaflet-container {
-  background: #0a1020 !important;
+  background: #E5E9EC !important; /* light gray map background */
   font-family: 'Inter', system-ui, sans-serif !important;
 }
 
-/* Select option fix for dark mode */
+/* Select option fix for light mode */
 option {
-  background-color: #0F1E35;
-  color: #F1F5F9;
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-main);
 }

@@ -36,9 +36,9 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
   const items = role === 'DRIVER' ? driverNavItems : navItems;
 
   return (
-    <div className="flex h-screen bg-primary-900 text-text-main overflow-hidden font-sans selection:bg-emergency/30">
+    <div className="flex h-screen bg-primary-900 text-text-main overflow-hidden font-sans selection:bg-info/20 selection:text-info">
       {/* Sidebar */}
-      <aside className="w-60 bg-primary-900 border-r border-primary-700/60 flex flex-col z-20 shadow-2xl">
+      <aside className="w-60 bg-primary-800 border-r border-primary-700 flex flex-col z-20 shadow-sm">
 
         {/* Logo + Back to Landing */}
         <div className="p-5 border-b border-primary-700/50">
@@ -52,7 +52,7 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
           {/* Back to Landing */}
           <Link
             to="/"
-            className="flex items-center gap-1.5 text-[10px] text-text-muted hover:text-white transition-colors font-bold uppercase tracking-widest group"
+            className="flex items-center gap-1.5 text-[10px] text-text-muted hover:text-text-main transition-colors font-bold uppercase tracking-widest group"
           >
             <ArrowLeft size={11} className="group-hover:-translate-x-0.5 transition-transform" />
             Back to Landing
@@ -69,19 +69,19 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
                 to={item.path}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-md transition-all duration-150 ${
                   isActive
-                    ? 'bg-emergency/15 text-white border-l-2 border-emergency pl-2.5'
-                    : 'text-text-muted hover:bg-primary-700/40 hover:text-text-main border-l-2 border-transparent'
+                    ? 'bg-primary-600 text-brand-primary border-l-2 border-brand-primary pl-2.5'
+                    : 'text-text-muted hover:bg-primary-600 hover:text-text-main border-l-2 border-transparent'
                 }`}
               >
-                <item.icon size={16} className={isActive ? 'text-emergency' : ''} />
-                <span className={`text-[12px] font-semibold ${isActive ? 'text-white' : ''}`}>{item.label}</span>
+                <item.icon size={16} className={isActive ? 'text-brand-primary' : ''} />
+                <span className={`text-[12px] font-semibold ${isActive ? 'text-brand-primary' : ''}`}>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
         {/* System Status */}
-        <div className="px-4 py-3 bg-primary-800/40 border-t border-primary-700/50">
+        <div className="px-4 py-3 bg-primary-600 border-t border-primary-700">
           <p className="text-[9px] uppercase tracking-widest text-text-muted font-bold mb-2">System Status</p>
           <div className="space-y-1.5">
             <div className="flex justify-between items-center text-[10px]">
@@ -105,11 +105,10 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
           </div>
         </div>
 
-        {/* Exit */}
-        <div className="p-3 border-t border-primary-700/50">
+        <div className="p-3 border-t border-primary-700">
           <button
             onClick={handleExit}
-            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-md text-text-muted hover:text-emergency hover:bg-emergency/10 transition-all"
+            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-md text-text-muted hover:text-emergency hover:bg-primary-600 transition-all"
           >
             <LogOut size={16} />
             <span className="text-[12px] font-semibold">Exit Session</span>
@@ -124,14 +123,14 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
           <img 
             src="/images/landing-bg.jpg" 
             alt="EOC Background" 
-            className="w-full h-full object-cover opacity-15 mix-blend-luminosity grayscale"
+            className="w-full h-full object-cover opacity-10 grayscale"
           />
-          <div className="absolute inset-0 bg-primary-900/80" />
+          <div className="absolute inset-0 bg-primary-900/90" />
           <div className="absolute inset-0 bg-gradient-to-br from-primary-900/40 via-transparent to-primary-900/60" />
         </div>
 
         {/* Top Header */}
-        <header className="relative z-10 h-13 min-h-[52px] bg-primary-800/60 backdrop-blur-md border-b border-primary-700/50 flex items-center px-6 justify-between shrink-0">
+        <header className="relative z-10 h-13 min-h-[52px] bg-primary-800 border-b border-primary-700 flex items-center px-6 justify-between shrink-0 shadow-sm">
           <div className="flex items-center gap-3">
             {isSystemDemoMode ? (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-warning/15 border border-warning/25 text-warning text-[10px] font-bold uppercase tracking-widest">

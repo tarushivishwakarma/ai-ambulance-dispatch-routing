@@ -14,18 +14,21 @@ const seedHistorical = async () => {
     console.log('Connected.');
 
     const cities = [
-      { name: 'Lucknow', lat: 26.8467, lng: 80.9462 },
-      { name: 'Mumbai', lat: 19.0760, lng: 72.8777 },
-      { name: 'Bengaluru', lat: 12.9716, lng: 77.5946 },
-      { name: 'Chennai', lat: 13.0827, lng: 80.2707 },
-      { name: 'Delhi', lat: 28.7041, lng: 77.1025 },
-      { name: 'Pune', lat: 18.5204, lng: 73.8567 },
-      { name: 'Hyderabad', lat: 17.3850, lng: 78.4867 },
-      { name: 'Kolkata', lat: 22.5726, lng: 88.3639 }
+      { name: 'Lucknow', state: 'Uttar Pradesh', lat: 26.8467, lng: 80.9462 },
+      { name: 'Mumbai', state: 'Maharashtra', lat: 19.0760, lng: 72.8777 },
+      { name: 'Bengaluru', state: 'Karnataka', lat: 12.9716, lng: 77.5946 },
+      { name: 'Chennai', state: 'Tamil Nadu', lat: 13.0827, lng: 80.2707 },
+      { name: 'Delhi', state: 'Delhi', lat: 28.7041, lng: 77.1025 },
+      { name: 'Pune', state: 'Maharashtra', lat: 18.5204, lng: 73.8567 },
+      { name: 'Hyderabad', state: 'Telangana', lat: 17.3850, lng: 78.4867 },
+      { name: 'Kolkata', state: 'West Bengal', lat: 22.5726, lng: 88.3639 },
+      { name: 'Jaipur', state: 'Rajasthan', lat: 26.9124, lng: 75.7873 },
+      { name: 'Ahmedabad', state: 'Gujarat', lat: 23.0225, lng: 72.5714 }
     ];
 
-    const categories = ['MEDICAL_EMERGENCY', 'ROAD_ACCIDENT', 'FIRE', 'NATURAL_DISASTER', 'VIOLENCE'];
-    const hospitals = ['KGMU', 'KEM Hospital', 'Narayana Health', 'Apollo Hospital', 'AIIMS', 'Fortis', 'Max Super Speciality'];
+    const categories = ['MEDICAL_EMERGENCY', 'ROAD_ACCIDENT', 'FIRE', 'NATURAL_DISASTER', 'VIOLENCE', 'CARDIAC', 'TRAUMA'];
+    const hospitals = ['KGMU', 'KEM Hospital', 'Narayana Health', 'Apollo Hospital', 'AIIMS', 'Fortis', 'Max Super Speciality', 'City General Hospital', 'Manipal Hospital'];
+    const ambulanceTypes = ['ALS (Advanced Life Support)', 'BLS (Basic Life Support)', 'Neonatal', 'Bariatric'];
     
     console.log('Generating 500 historical incidents...');
     
@@ -91,9 +94,11 @@ const seedHistorical = async () => {
               coordinates: [city.lng + (Math.random() * 0.1 - 0.05), city.lat + (Math.random() * 0.1 - 0.05)]
             },
             address: `Historical Location, ${city.name}`,
+            city: city.name,
+            state: city.state,
             severity,
             affectedPeople,
-            isMedicalEmergency: category === 'MEDICAL_EMERGENCY' || category === 'ROAD_ACCIDENT',
+            isMedicalEmergency: ['MEDICAL_EMERGENCY', 'ROAD_ACCIDENT', 'CARDIAC', 'TRAUMA'].includes(category),
             status: 'RESOLVED',
             source: 'SYNTHETIC_DEMO',
             reportedAt,
@@ -103,7 +108,9 @@ const seedHistorical = async () => {
             resolvedAt,
             createdAt: reportedAt,
             updatedAt: resolvedAt,
-            // Mock hospital reference just as string for historical analytics if we don't link full refs
+            hospitalName: hospitals[i % hospitals.length],
+            ambulanceType: severity > 7 ? 'ALS (Advanced Life Support)' : ambulanceTypes[i % ambulanceTypes.length],
+            outcome: severity === 10 ? (i % 3 === 0 ? 'FATALITY' : 'CRITICAL_TRANSFER') : 'TREATED_AND_DISCHARGED',
             aiAnalysis: { hospitalAssigned: hospitals[i % hospitals.length] } 
           }
         },

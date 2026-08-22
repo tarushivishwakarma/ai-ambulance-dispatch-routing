@@ -34,8 +34,8 @@ const CitizenReport = () => {
 
   return (
     <div className="min-h-screen bg-transparent text-text-main flex flex-col p-6 font-sans relative z-10">
-      <header className="mb-8 border-b border-primary-700/50 pb-4">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+      <header className="mb-8 border-b border-primary-700 pb-4">
+        <h1 className="text-2xl font-bold text-text-main flex items-center gap-2">
           <AlertCircle className="text-emergency" />
           Declare Emergency
         </h1>
@@ -49,7 +49,7 @@ const CitizenReport = () => {
             <textarea 
               required
               rows={4}
-              className="w-full bg-primary-800 border border-primary-700 rounded-md p-4 text-white focus:border-info focus:ring-1 focus:ring-info outline-none resize-none"
+              className="w-full bg-primary-800 border border-primary-700 rounded-md p-4 text-text-main focus:border-info focus:ring-1 focus:ring-info outline-none resize-none shadow-sm"
               placeholder="E.g., Severe car crash on main road, 2 people injured..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -62,7 +62,7 @@ const CitizenReport = () => {
               <MapPin className="absolute left-3 top-3 text-info" size={20} />
               <input 
                 type="text" 
-                className="w-full bg-primary-800 border border-primary-700 rounded-md py-3 pl-10 pr-4 text-white focus:border-info focus:ring-1 focus:ring-info outline-none"
+                className="w-full bg-primary-800 border border-primary-700 rounded-md py-3 pl-10 pr-4 text-text-main focus:border-info focus:ring-1 focus:ring-info outline-none shadow-sm"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
               />
@@ -70,7 +70,7 @@ const CitizenReport = () => {
           </label>
         </div>
 
-        <div className="bg-primary-800/50 border border-primary-700 rounded-lg p-6 text-center border-dashed">
+        <div className="bg-primary-800 border border-primary-700 rounded-lg p-6 text-center border-dashed shadow-sm">
           <Camera size={32} className="mx-auto text-text-muted mb-2" />
           <p className="text-sm text-text-muted font-medium mb-1">Attach Photo Evidence (Optional)</p>
           <p className="text-[10px] text-text-muted uppercase tracking-wider">Helps AI determine severity instantly</p>

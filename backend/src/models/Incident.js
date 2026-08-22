@@ -36,7 +36,15 @@ const incidentSchema = new mongoose.Schema({
   assignedDispatcher: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   recommendedHospital: { type: mongoose.Schema.Types.ObjectId, ref: 'Hospital' },
   reportedAt: { type: Date, default: Date.now },
-  resolvedAt: { type: Date }
+  resolvedAt: { type: Date },
+  
+  // Historical Analytics & CSV Reporting Fields
+  dispatchTime: { type: Date },
+  arrivedOnSceneTime: { type: Date },
+  hospitalArrivalTime: { type: Date },
+  outcome: { type: String },
+  hospitalName: { type: String },
+  ambulanceType: { type: String }
 }, { timestamps: true });
 
 incidentSchema.index({ location: '2dsphere' });

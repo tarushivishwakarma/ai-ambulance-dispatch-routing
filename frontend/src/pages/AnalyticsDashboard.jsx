@@ -1,13 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Activity, Clock, ShieldAlert, Truck, BarChart2, TrendingUp, CheckCircle2 } from 'lucide-react';
 import useDemoStore from '../demo/demoStore';
+import { apiService } from '../services/apiService';
 
 const AnalyticsDashboard = () => {
+  const [dbHistorical, setDbHistorical] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    apiService.getIncidents().then(data => {
+      const historical = data.filter(i => i.status === 'RESOLVED' || i.source === 'SYNTHETIC_DEMO');
+      setDbHistorical(historical);
+      setLoading(false);
+    });
+  }, []);
+
   const incidents = useDemoStore(state => state.incidents);
   const ambulances = useDemoStore(state => state.ambulances);
   const hospitals = useDemoStore(state => state.hospitals);
-  const historicalIncidents = useDemoStore(state => state.historicalIncidents);
-
   const activeIncidents = incidents.filter(i => !['RESOLVED', 'CANCELLED'].includes(i.status));
   const criticalIncidents = incidents.filter(i => i.severity >= 9 && !['RESOLVED', 'CANCELLED'].includes(i.status));
   const availableAmb = ambulances.filter(a => a.status === 'AVAILABLE');
@@ -44,9 +54,10 @@ const AnalyticsDashboard = () => {
     return acc;
   }, {});
 
-  // Historical: incidents by year
-  const byYear = historicalIncidents.reduce((acc, h) => {
-    acc[h.year] = (acc[h.year] || 0) + 1;
+  // Historical: incidents by year (FROM MONGODB)
+  const byYear = dbHistorical.reduce((acc, h) => {
+    const y = new Date(h.reportedAt || h.createdAt).getFullYear();
+    if (!isNaN(y)) acc[y] = (acc[y] || 0) + 1;
     return acc;
   }, {});
   const years = Object.entries(byYear).sort((a, b) => a[0] - b[0]);
@@ -66,7 +77,7 @@ const AnalyticsDashboard = () => {
           </div>
         </div>
         <div className="text-[10px] text-text-muted font-bold uppercase tracking-widest">
-          {incidents.length} incidents · {ambulances.length} units · {hospitals.length} hospitals · {historicalIncidents.length} historical
+          {incidents.length} incidents · {ambulances.length} units · {hospitals.length} hospitals · {dbHistorical.length} historical
         </div>
       </div>
 
@@ -189,19 +200,23 @@ const AnalyticsDashboard = () => {
       {/* Historical Trend */}
       <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg shadow-xl overflow-hidden">
         <div className="p-3 border-b border-primary-700/50 bg-primary-900/80">
-          <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Historical Incidents by Year ({historicalIncidents.length} records)</h3>
+          <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Historical Incidents by Year ({dbHistorical.length} records)</h3>
         </div>
         <div className="p-4 flex items-end gap-4 h-32">
-          {years.map(([year, count]) => (
-            <div key={year} className="flex flex-col items-center gap-1 flex-1">
-              <span className="text-[10px] font-bold text-text-muted">{count}</span>
-              <div
-                className="w-full bg-info/60 rounded-t transition-all duration-1000"
-                style={{ height: `${(count / maxYear) * 64}px`, minHeight: '4px' }}
-              />
-              <span className="text-[9px] font-bold text-text-muted uppercase">{year}</span>
-            </div>
-          ))}
+          {loading ? (
+            <div className="w-full text-center text-text-muted text-xs font-bold uppercase tracking-widest animate-pulse">Loading MongoDB Analytics...</div>
+          ) : (
+            years.map(([year, count]) => (
+              <div key={year} className="flex flex-col items-center gap-1 flex-1">
+                <span className="text-[10px] font-bold text-text-muted">{count}</span>
+                <div
+                  className="w-full bg-info/60 rounded-t transition-all duration-1000"
+                  style={{ height: `${(count / maxYear) * 64}px`, minHeight: '4px' }}
+                />
+                <span className="text-[9px] font-bold text-text-muted uppercase">{year}</span>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

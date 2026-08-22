@@ -12,9 +12,9 @@ const SettingsView = () => {
         <p className="text-sm text-text-muted mt-1">Manage session preferences and environment configuration.</p>
       </header>
 
-      <div className="bg-primary-800/50 border border-primary-700 rounded-lg p-6 space-y-6">
+      <div className="bg-primary-800 border border-primary-700 rounded-lg p-6 space-y-6 shadow-sm">
         <div>
-          <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-4"><User size={16} /> Operator Profile</h2>
+          <h2 className="text-sm font-bold text-text-main flex items-center gap-2 mb-4"><User size={16} /> Operator Profile</h2>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="text-[10px] uppercase font-bold text-text-muted tracking-wider block mb-1">Operator ID</label>
@@ -27,8 +27,8 @@ const SettingsView = () => {
           </div>
         </div>
         
-        <div className="pt-6 border-t border-primary-700/50">
-          <h2 className="text-sm font-bold text-white flex items-center gap-2 mb-4"><Shield size={16} /> Connection Security</h2>
+        <div className="pt-6 border-t border-primary-700">
+          <h2 className="text-sm font-bold text-text-main flex items-center gap-2 mb-4"><Shield size={16} /> Connection Security</h2>
           <div className="flex items-center gap-3">
              <div className="w-2 h-2 rounded-full bg-operational animate-pulse"></div>
              <span className="text-sm text-text-main">JWT Session Active</span>

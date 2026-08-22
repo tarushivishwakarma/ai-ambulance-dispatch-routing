@@ -51,7 +51,7 @@ const CommandDashboard = () => {
       <div className="flex flex-col h-full w-full max-w-[1920px] mx-auto p-4 space-y-4">
 
       {/* Header */}
-      <div className="flex items-center justify-between bg-primary-800/60 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl">
+      <div className="flex items-center justify-between bg-primary-800 p-3 rounded-lg border border-primary-700 shadow-sm">
         <div className="flex items-center gap-4">
           <div className="bg-emergency/20 text-emergency p-2.5 rounded border border-emergency/30">
             <Activity size={22} className="animate-pulse" />
@@ -106,14 +106,14 @@ const CommandDashboard = () => {
 
         {/* LEFT SIDEBAR */}
         <div className="flex flex-col gap-4 h-full">
-          <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg flex flex-col shadow-2xl overflow-hidden h-1/2">
-            <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80">
+          <div className="bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden h-1/2">
+            <div className="p-2.5 border-b border-primary-700 bg-primary-600">
               <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Command Overview</h3>
             </div>
             <div className="flex-1 p-3 flex flex-col gap-3 overflow-y-auto">
 
               <div className="space-y-2">
-                <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-widest border-b border-primary-700/40 pb-1">Fleet Status</h4>
+                <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-widest border-b border-primary-700 pb-1">Fleet Status</h4>
                 {[
                   { label: 'Available', val: availableAmb.length, color: 'text-operational' },
                   { label: 'En Route', val: enRouteAmb.length, color: 'text-warning' },
@@ -128,7 +128,7 @@ const CommandDashboard = () => {
               </div>
 
               <div className="space-y-2 pt-2">
-                <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-widest border-b border-primary-700/40 pb-1">Incidents</h4>
+                <h4 className="text-[10px] font-bold text-text-muted uppercase tracking-widest border-b border-primary-700 pb-1">Incidents</h4>
                 {[
                   { label: 'Total', val: filteredInc.length, color: 'text-text-main' },
                   { label: 'Active', val: activeIncidents.length, color: 'text-warning' },
@@ -144,8 +144,8 @@ const CommandDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg flex flex-col shadow-2xl overflow-hidden h-1/2">
-            <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80">
+          <div className="bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden h-1/2">
+            <div className="p-2.5 border-b border-primary-700 bg-primary-600">
               <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
                 Recently Resolved
               </h3>
@@ -155,13 +155,13 @@ const CommandDashboard = () => {
                 <div className="text-center text-text-muted mt-10 text-[10px] font-bold uppercase tracking-wider">No resolved incidents</div>
               ) : (
                 filteredInc.filter(i => i.status === 'RESOLVED').slice(0, 10).map((incident) => (
-                  <div key={incident._id} className="p-2 bg-primary-900/80 border border-primary-700/40 rounded">
+                  <div key={incident._id} className="p-2 bg-primary-800 border border-primary-700 rounded">
                     <div className="flex justify-between items-start mb-1">
                       <span className="text-[10px] font-bold text-text-main truncate">{incident.incidentId || incident._id.substring(0,8)}</span>
                       <span className="text-[9px] font-bold text-operational uppercase">Resolved</span>
                     </div>
                     <div className="text-[9px] text-text-muted uppercase tracking-widest truncate">{incident.category.replace(/_/g, ' ')}</div>
-                    <div className="text-[9px] text-slate-500 truncate">{incident.city}</div>
+                    <div className="text-[9px] text-text-secondary truncate">{incident.city}</div>
                   </div>
                 ))
               )}
@@ -170,8 +170,8 @@ const CommandDashboard = () => {
         </div>
 
         {/* MAP PANEL */}
-        <div className="lg:col-span-3 bg-primary-800/60 border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col">
-          <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center z-10">
+        <div className="lg:col-span-3 bg-primary-800 border border-primary-700 rounded-lg overflow-hidden shadow-sm relative flex flex-col">
+          <div className="p-2.5 border-b border-primary-700 bg-primary-600 flex justify-between items-center z-10">
             <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
               Live Operations Map
               <span className="w-1.5 h-1.5 rounded-full bg-operational animate-pulse" />
@@ -184,8 +184,8 @@ const CommandDashboard = () => {
 
         {/* RIGHT SIDEBAR: Action Queue */}
         <div className="flex flex-col gap-4 h-full">
-          <div className="flex-1 bg-primary-800/60 border border-primary-700/50 rounded-lg flex flex-col shadow-2xl overflow-hidden">
-            <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center">
+          <div className="flex-1 bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden">
+            <div className="p-2.5 border-b border-primary-700 bg-primary-600 flex justify-between items-center">
               <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
                 <AlertTriangle size={12} className="text-emergency" /> Action Queue
               </h3>
@@ -202,7 +202,7 @@ const CommandDashboard = () => {
                         <div 
                           key={incident._id} 
                           onClick={() => setSelectedIncident(incident)}
-                          className="p-2.5 bg-primary-900/80 border border-primary-700/40 rounded hover:border-primary-600/60 transition-colors cursor-pointer"
+                          className="p-2.5 bg-primary-800 border border-primary-700 rounded hover:border-primary-600 transition-colors cursor-pointer shadow-sm"
                         >
                           <div className="flex justify-between items-start mb-1.5">
                             <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${

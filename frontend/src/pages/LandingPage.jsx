@@ -64,8 +64,8 @@ const LandingPage = () => {
           className="w-full h-full object-cover"
           style={{ filter: 'brightness(0.35) saturate(0.7)' }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-900 via-primary-900/90 to-primary-900/70" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary-900 via-primary-900/50 to-primary-900/70" />
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-900 via-primary-900/90 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-900 via-transparent to-primary-900/70" />
       </div>
 
       {/* Navbar */}
@@ -73,17 +73,17 @@ const LandingPage = () => {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
-        className="h-16 border-b border-primary-700/50 bg-primary-900/70 backdrop-blur-md px-8 flex items-center justify-between z-50 relative shadow-xl"
+        className="h-16 border-b border-primary-700 bg-primary-800 px-8 flex items-center justify-between z-50 relative shadow-sm"
       >
         <div className="flex items-center gap-3">
           <img src="/logo.svg" alt="AI Dispatch Logo" className="h-8 w-8 object-contain drop-shadow-md" />
-          <span className="text-white text-sm font-bold tracking-widest uppercase">AI Dispatch</span>
+          <span className="text-text-main text-sm font-bold tracking-widest uppercase">AI Dispatch</span>
         </div>
         <div className="flex items-center gap-6">
-          <Link to="/" className="text-[11px] font-bold tracking-widest uppercase text-text-muted hover:text-white transition-colors">
+          <Link to="/" className="text-[11px] font-bold tracking-widest uppercase text-text-muted hover:text-text-main transition-colors">
             Home
           </Link>
-          <Link to="/report" className="text-[11px] font-bold tracking-widest uppercase text-text-muted hover:text-white transition-colors">
+          <Link to="/report" className="text-[11px] font-bold tracking-widest uppercase text-text-muted hover:text-text-main transition-colors">
             Report Emergency
           </Link>
           <Link
@@ -114,7 +114,7 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-5xl lg:text-7xl font-black tracking-tight text-white uppercase leading-none mb-4"
+            className="text-5xl lg:text-7xl font-black tracking-tight text-text-main uppercase leading-none mb-4"
           >
             AI<br />
             <span className="text-emergency">Dispatch</span>
@@ -124,7 +124,7 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="text-base text-slate-300 max-w-xl leading-relaxed mb-8"
+            className="text-base text-text-secondary max-w-xl leading-relaxed mb-8"
           >
             Emergency coordination, ambulance dispatch and hospital routing — powered by Gemini AI.
             Real-time situational awareness across India.
@@ -188,12 +188,12 @@ const LandingPage = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary-900/70 to-transparent" />
             {/* Live overlay badge */}
-            <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md border border-white/10 rounded px-3 py-1.5">
+            <div className="absolute top-4 left-4 flex items-center gap-2 bg-primary-800/90 border border-primary-700 rounded px-3 py-1.5 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-emergency animate-pulse" />
-              <span className="text-white text-[10px] font-bold uppercase tracking-widest">Live Operations</span>
+              <span className="text-text-main text-[10px] font-bold uppercase tracking-widest">Live Operations</span>
             </div>
             <div className="absolute bottom-4 left-4 right-4">
-              <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-lg p-3 text-white">
+              <div className="bg-primary-800/90 border border-primary-700 rounded-lg p-3 text-text-main shadow-sm">
                 <p className="text-[9px] uppercase tracking-widest text-text-muted mb-1">AI Dispatch System</p>
                 <p className="text-xs font-bold">Coordinating emergency response across India</p>
               </div>
@@ -207,7 +207,7 @@ const LandingPage = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7, duration: 0.6 }}
-        className="relative z-10 border-t border-primary-700/50 bg-primary-900/80 backdrop-blur-md py-10 px-8"
+        className="relative z-10 border-t border-primary-700 bg-primary-800 py-10 px-8"
       >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
@@ -235,13 +235,13 @@ const LandingPage = () => {
           ].map(item => (
             <div
               key={item.title}
-              className={`p-5 rounded-lg bg-primary-800/60 border border-primary-700/50 ${item.borderHover} transition-all cursor-default`}
+              className={`p-5 rounded-lg bg-primary-800 border border-primary-700 ${item.borderHover} transition-all cursor-default shadow-sm`}
             >
               <div className="flex items-center gap-3 mb-3">
                 <item.icon className={item.color} size={20} />
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">{item.title}</h3>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-text-main">{item.title}</h3>
               </div>
-              <p className="text-xs text-slate-400 leading-relaxed">{item.desc}</p>
+              <p className="text-xs text-text-secondary leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
