@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none" stroke="currentColor">
+  <!-- Star of Life -->
+  <path d="M 40,10 L 60,10 L 60,40 L 90,40 L 90,60 L 60,60 L 60,90 L 40,90 L 40,60 L 10,60 L 10,40 L 40,40 Z" fill="#0284C7" stroke="none" />
+  <!-- Asclepius Rod -->
+  <line x1="50" y1="20" x2="50" y2="80" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" />
+  <path d="M 45,30 Q 60,40 50,50 Q 40,60 55,70" stroke="#FFFFFF" stroke-width="2.5" fill="none" stroke-linecap="round" />
+</svg>

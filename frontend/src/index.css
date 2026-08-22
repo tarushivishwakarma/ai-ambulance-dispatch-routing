@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Typography */
+  --font-sans: 'Inter', 'Geist', 'Manrope', system-ui, sans-serif;
+
+  /* Light Emergency Operations Palette */
+  --color-primary-900: #F8FAFC; /* Page background */
+  --color-primary-800: #FFFFFF; /* Cards/Containers */
+  --color-primary-700: #E2E8F0; /* Borders */
+  --color-primary-600: #CBD5E1; /* Muted elements */
+
+  /* Semantic Colors */
+  --color-emergency: #E53935;
+  --color-emergency-hover: #D32F2F;
+  
+  --color-operational: #16A34A;
+  --color-info: #0284C7;
+  --color-warning: #D97706;
+
+  /* Text Colors */
+  --color-text-main: #0F172A;
+  --color-text-muted: #475569;
+}
+
+@layer base {
+  body {
+    @apply bg-primary-900 text-text-main font-sans antialiased overflow-x-hidden;
+  }
+}
+
+/* Custom Scrollbar for professional look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-primary-900;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-700 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-600;
+}
+
+/* Map Popups Override */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  @apply !bg-primary-800 !text-text-main border !border-primary-700;
+}
