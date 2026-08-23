@@ -60,10 +60,10 @@ const RoadConditions = () => {
       </div>
 
       {/* Main Grid: Map + List */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 h-[calc(100vh-140px)]">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:h-[calc(100vh-140px)] lg:overflow-hidden pb-4 lg:pb-0">
         
         {/* MAP PANEL */}
-        <div className="lg:col-span-2 bg-primary-800/60 backdrop-blur-md border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col h-full">
+        <div className="lg:col-span-2 bg-primary-800/60 backdrop-blur-md border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col h-full min-h-[350px] lg:min-h-0">
            <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center z-10">
               <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Live Traffic & Blockage Map</h3>
            </div>

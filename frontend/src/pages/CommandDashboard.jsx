@@ -51,9 +51,9 @@ const CommandDashboard = () => {
       <div className="flex flex-col h-full w-full max-w-[1920px] mx-auto p-4 space-y-4">
 
       {/* Header */}
-      <div className="flex items-center justify-between bg-primary-800 p-4 rounded-lg border border-primary-700 shadow-sm">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-primary-800 p-4 rounded-lg border border-primary-700 shadow-sm gap-4">
         <div className="flex items-center gap-4">
-          <div className="bg-emergency/10 text-emergency p-2.5 rounded-lg border border-emergency/20">
+          <div className="bg-emergency/10 text-emergency p-2.5 rounded-lg border border-emergency/20 shrink-0">
             <Activity size={22} className="animate-pulse" />
           </div>
           <div>
@@ -66,11 +66,12 @@ const CommandDashboard = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 md:gap-4 w-full md:w-auto">
           {isSystemDemoMode && (
-            <span className="text-[10px] font-bold text-warning uppercase bg-warning/10 px-2.5 py-1 rounded border border-warning/20 flex items-center gap-1.5">
+            <span className="text-[10px] font-bold text-warning uppercase bg-warning/10 px-2.5 py-1 rounded border border-warning/20 flex items-center gap-1.5 shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-warning animate-pulse" />
-              Demo Operations Active
+              <span className="hidden sm:inline">Demo Operations Active</span>
+              <span className="sm:hidden">Demo</span>
             </span>
           )}
           <div className="flex items-center gap-2 bg-primary-800 border border-primary-700 rounded px-3 py-2 shadow-sm">
@@ -102,11 +103,11 @@ const CommandDashboard = () => {
       </div>
 
       {/* Main Operations Grid */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4" style={{ height: 'calc(100vh - 260px)' }}>
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-4 lg:h-[calc(100vh-260px)] lg:overflow-hidden pb-4 lg:pb-0">
 
         {/* LEFT SIDEBAR */}
-        <div className="flex flex-col gap-4 h-full">
-          <div className="bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden h-1/2">
+        <div className="flex flex-col gap-4 h-full order-2 lg:order-1">
+          <div className="bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden h-[300px] lg:h-1/2">
             <div className="p-2.5 border-b border-primary-700 bg-primary-600">
               <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Command Overview</h3>
             </div>
@@ -144,7 +145,7 @@ const CommandDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden h-1/2">
+          <div className="bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden h-[300px] lg:h-1/2">
             <div className="p-2.5 border-b border-primary-700 bg-primary-600">
               <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
                 Recently Resolved
@@ -170,8 +171,8 @@ const CommandDashboard = () => {
         </div>
 
         {/* MAP PANEL */}
-        <div className="lg:col-span-3 bg-primary-800 border border-primary-700 rounded-lg overflow-hidden shadow-sm relative flex flex-col">
-          <div className="p-2.5 border-b border-primary-700 bg-primary-600 flex justify-between items-center z-10">
+        <div className="lg:col-span-3 bg-primary-800 border border-primary-700 rounded-lg overflow-hidden shadow-sm relative flex flex-col order-1 lg:order-2 min-h-[350px] md:min-h-[450px] lg:min-h-0">
+          <div className="p-2.5 border-b border-primary-700 bg-primary-600 flex justify-between items-center z-10 shrink-0">
             <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
               Live Operations Map
               <span className="w-1.5 h-1.5 rounded-full bg-operational animate-pulse" />
@@ -183,7 +184,7 @@ const CommandDashboard = () => {
         </div>
 
         {/* RIGHT SIDEBAR: Action Queue */}
-        <div className="flex flex-col gap-4 h-full">
+        <div className="flex flex-col gap-4 h-[400px] lg:h-full order-3">
           <div className="flex-1 bg-primary-800 border border-primary-700 rounded-lg flex flex-col shadow-sm overflow-hidden">
             <div className="p-2.5 border-b border-primary-700 bg-primary-600 flex justify-between items-center">
               <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">

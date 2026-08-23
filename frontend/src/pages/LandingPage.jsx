@@ -157,7 +157,7 @@ const LandingPage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7, duration: 0.6 }}
-            className="mt-12 flex items-center gap-8"
+            className="mt-12 flex flex-wrap items-center gap-6 md:gap-8"
           >
             {[
               { label: 'Ambulances', value: '150+', color: 'text-operational' },

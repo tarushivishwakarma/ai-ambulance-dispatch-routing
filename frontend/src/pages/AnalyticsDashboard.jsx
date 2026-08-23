@@ -84,7 +84,7 @@ const AnalyticsDashboard = () => {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { label: 'Active Incidents', val: activeIncidents.length, icon: ShieldAlert, color: 'text-warning', sub: `${criticalIncidents.length} critical` },
           { label: 'Fleet Utilization', val: `${fleetUtil}%`, icon: Truck, color: 'text-info', sub: `${availableAmb.length} standby` },
@@ -204,7 +204,7 @@ const AnalyticsDashboard = () => {
         <div className="p-3 border-b border-primary-700/50 bg-primary-900/80">
           <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Historical Incidents by Year ({dbHistorical.length} records)</h3>
         </div>
-        <div className="p-4 flex items-end gap-4 h-32">
+        <div className="p-4 flex items-end gap-2 md:gap-4 h-32 overflow-x-auto">
           {loading ? (
             <div className="w-full text-center text-text-muted text-xs font-bold uppercase tracking-widest animate-pulse">Loading MongoDB Analytics...</div>
           ) : (

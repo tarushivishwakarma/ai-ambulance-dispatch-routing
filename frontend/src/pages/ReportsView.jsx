@@ -149,7 +149,7 @@ const ReportsView = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-primary-800 border border-primary-700 rounded-lg p-4 shadow-sm flex items-center gap-4 overflow-x-auto flex-shrink-0">
+      <div className="bg-primary-800 border border-primary-700 rounded-lg p-4 shadow-sm flex flex-wrap items-center gap-3 lg:gap-4 flex-shrink-0">
         <Filter size={16} className="text-text-muted flex-shrink-0" />
         
         <select 
@@ -190,19 +190,19 @@ const ReportsView = () => {
           {categories.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
         </select>
         
-        <span className="text-[10px] font-bold text-text-muted tracking-widest ml-auto whitespace-nowrap">
+        <span className="text-[10px] font-bold text-text-muted tracking-widest md:ml-auto whitespace-nowrap w-full md:w-auto mt-2 md:mt-0 text-center md:text-right">
           {filteredIncidents.length} RECORDS
         </span>
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto bg-primary-800 border border-primary-700 rounded-lg shadow-sm">
+      <div className="flex-1 overflow-x-auto w-full bg-primary-800 border border-primary-700 rounded-lg shadow-sm">
         {loading ? (
           <div className="p-8 text-text-muted text-center text-sm font-bold uppercase tracking-widest animate-pulse">Loading historical reports...</div>
         ) : filteredIncidents.length === 0 ? (
           <div className="p-8 text-text-muted text-center text-sm font-bold uppercase tracking-widest">No records found for current filters.</div>
         ) : (
-          <table className="w-full text-left text-sm text-text-main relative">
+          <table className="w-full text-left text-sm text-text-main relative min-w-[700px]">
             <thead className="bg-primary-600 border-b border-primary-700 text-[10px] uppercase tracking-widest text-text-muted sticky top-0 z-10 shadow-sm">
               <tr>
                 <th className="px-4 py-3 font-bold">Incident ID</th>

@@ -104,10 +104,10 @@ const IncidentsList = () => {
       </div>
 
       {/* Main Grid */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4" style={{ height: 'calc(100vh - 160px)' }}>
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:h-[calc(100vh-160px)] lg:overflow-hidden pb-4 lg:pb-0">
 
         {/* MAP PANEL */}
-        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col h-full">
+        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col h-full min-h-[350px] lg:min-h-0">
           <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 z-10">
             <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Incident Map</h3>
           </div>
@@ -122,8 +122,8 @@ const IncidentsList = () => {
             <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Event Log</h3>
             <span className="text-[10px] font-bold text-text-muted bg-primary-700/50 px-2 py-0.5 rounded">{filteredIncidents.length} events</span>
           </div>
-          <div className="flex-1 overflow-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="flex-1 overflow-x-auto w-full">
+            <table className="w-full text-left border-collapse min-w-[600px]">
               <thead className="sticky top-0 bg-primary-900/95 backdrop-blur-sm z-10 border-b border-primary-700/50">
                 <tr className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
                   <th className="p-3">ID / Time</th>

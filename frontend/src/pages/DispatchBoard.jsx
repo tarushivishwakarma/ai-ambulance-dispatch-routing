@@ -83,10 +83,10 @@ const DispatchBoard = () => {
         </div>
       )}
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4" style={{ height: 'calc(100vh - 220px)' }}>
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 lg:h-[calc(100vh-220px)] lg:overflow-hidden pb-4 lg:pb-0">
 
         {/* LEFT: Pending Incidents */}
-        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg flex flex-col shadow-2xl overflow-hidden h-full">
+        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg flex flex-col shadow-2xl overflow-hidden h-[300px] lg:h-full order-2 lg:order-1">
           <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center">
             <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
               <ShieldAlert size={14} className="text-emergency" /> Action Required
@@ -135,8 +135,8 @@ const DispatchBoard = () => {
         </div>
 
         {/* CENTER: Tactical Map */}
-        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col h-full">
-          <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center z-10">
+        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col h-full min-h-[350px] lg:min-h-0 order-1 lg:order-2">
+          <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center z-10 shrink-0">
             <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
               <Crosshair size={14} className="text-info" /> Tactical Map
             </h3>
@@ -147,7 +147,7 @@ const DispatchBoard = () => {
         </div>
 
         {/* RIGHT: Available Units */}
-        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg flex flex-col shadow-2xl overflow-hidden h-full">
+        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg flex flex-col shadow-2xl overflow-hidden h-[300px] lg:h-full order-3">
           <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center">
             <h3 className="text-xs font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
               <Truck size={14} className="text-operational" /> Available Resources
