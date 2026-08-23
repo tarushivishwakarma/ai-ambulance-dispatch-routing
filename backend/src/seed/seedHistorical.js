@@ -11,119 +11,212 @@ const seedHistorical = async () => {
   try {
     console.log('Connecting to MongoDB...', MONGO_URI);
     await mongoose.connect(MONGO_URI);
-    console.log('Connected.');
+    console.log('Connected to MongoDB.');
 
-    const cities = [
-      { name: 'Lucknow', state: 'Uttar Pradesh', lat: 26.8467, lng: 80.9462 },
-      { name: 'Mumbai', state: 'Maharashtra', lat: 19.0760, lng: 72.8777 },
-      { name: 'Bengaluru', state: 'Karnataka', lat: 12.9716, lng: 77.5946 },
-      { name: 'Chennai', state: 'Tamil Nadu', lat: 13.0827, lng: 80.2707 },
-      { name: 'Delhi', state: 'Delhi', lat: 28.7041, lng: 77.1025 },
-      { name: 'Pune', state: 'Maharashtra', lat: 18.5204, lng: 73.8567 },
-      { name: 'Hyderabad', state: 'Telangana', lat: 17.3850, lng: 78.4867 },
-      { name: 'Kolkata', state: 'West Bengal', lat: 22.5726, lng: 88.3639 },
-      { name: 'Jaipur', state: 'Rajasthan', lat: 26.9124, lng: 75.7873 },
-      { name: 'Ahmedabad', state: 'Gujarat', lat: 23.0225, lng: 72.5714 }
+    const citiesData = [
+      { city: 'New Delhi', state: 'Delhi', lat: 28.6139, lng: 77.2090 },
+      { city: 'Mumbai', state: 'Maharashtra', lat: 19.0760, lng: 72.8777 },
+      { city: 'Bengaluru', state: 'Karnataka', lat: 12.9716, lng: 77.5946 },
+      { city: 'Hyderabad', state: 'Telangana', lat: 17.3850, lng: 78.4867 },
+      { city: 'Chennai', state: 'Tamil Nadu', lat: 13.0827, lng: 80.2707 },
+      { city: 'Kolkata', state: 'West Bengal', lat: 22.5726, lng: 88.3639 },
+      { city: 'Pune', state: 'Maharashtra', lat: 18.5204, lng: 73.8567 },
+      { city: 'Ahmedabad', state: 'Gujarat', lat: 23.0225, lng: 72.5714 },
+      { city: 'Jaipur', state: 'Rajasthan', lat: 26.9124, lng: 75.7873 },
+      { city: 'Lucknow', state: 'Uttar Pradesh', lat: 26.8467, lng: 80.9462 },
+      { city: 'Kanpur', state: 'Uttar Pradesh', lat: 26.4499, lng: 80.3319 },
+      { city: 'Surat', state: 'Gujarat', lat: 21.1702, lng: 72.8311 },
+      { city: 'Indore', state: 'Madhya Pradesh', lat: 22.7196, lng: 75.8577 },
+      { city: 'Bhopal', state: 'Madhya Pradesh', lat: 23.2599, lng: 77.4126 },
+      { city: 'Patna', state: 'Bihar', lat: 25.5941, lng: 85.1376 },
+      { city: 'Chandigarh', state: 'Chandigarh', lat: 30.7333, lng: 76.7794 },
+      { city: 'Dehradun', state: 'Uttarakhand', lat: 30.3165, lng: 78.0322 },
+      { city: 'Guwahati', state: 'Assam', lat: 26.1445, lng: 91.7362 },
+      { city: 'Bhubaneswar', state: 'Odisha', lat: 20.2961, lng: 85.8245 },
+      { city: 'Nagpur', state: 'Maharashtra', lat: 21.1458, lng: 79.0882 },
+      { city: 'Nashik', state: 'Maharashtra', lat: 20.0110, lng: 73.7903 },
+      { city: 'Agra', state: 'Uttar Pradesh', lat: 27.1767, lng: 78.0081 },
+      { city: 'Varanasi', state: 'Uttar Pradesh', lat: 25.3176, lng: 82.9739 },
+      { city: 'Amritsar', state: 'Punjab', lat: 31.6340, lng: 74.8723 },
+      { city: 'Ludhiana', state: 'Punjab', lat: 30.9010, lng: 75.8523 },
+      { city: 'Coimbatore', state: 'Tamil Nadu', lat: 11.0168, lng: 76.9558 },
+      { city: 'Visakhapatnam', state: 'Andhra Pradesh', lat: 17.6868, lng: 83.2185 },
+      { city: 'Kochi', state: 'Kerala', lat: 9.9312, lng: 76.2673 },
+      { city: 'Thiruvananthapuram', state: 'Kerala', lat: 8.5241, lng: 76.9366 },
+      { city: 'Ranchi', state: 'Jharkhand', lat: 23.3441, lng: 85.3096 }
     ];
 
-    const categories = ['MEDICAL_EMERGENCY', 'ROAD_ACCIDENT', 'FIRE', 'NATURAL_DISASTER', 'VIOLENCE', 'CARDIAC', 'TRAUMA'];
-    const hospitals = ['KGMU', 'KEM Hospital', 'Narayana Health', 'Apollo Hospital', 'AIIMS', 'Fortis', 'Max Super Speciality', 'City General Hospital', 'Manipal Hospital'];
-    const ambulanceTypes = ['ALS (Advanced Life Support)', 'BLS (Basic Life Support)', 'Neonatal', 'Bariatric'];
-    
-    console.log('Generating 500 historical incidents...');
-    
+    const categoriesList = [
+      { cat: 'ROAD_ACCIDENT', weight: 25 },
+      { cat: 'MEDICAL', weight: 20 },
+      { cat: 'CARDIAC', weight: 15 },
+      { cat: 'TRAUMA', weight: 10 },
+      { cat: 'RESPIRATORY', weight: 10 },
+      { cat: 'FALL', weight: 7 },
+      { cat: 'STROKE', weight: 6 },
+      { cat: 'FIRE', weight: 4 },
+      { cat: 'INDUSTRIAL', weight: 2 },
+      { cat: 'OTHER', weight: 1 }
+    ];
+
+    const hospitals = [
+      'AIIMS New Delhi', 'Safdarjung Hospital', 'KEM Hospital', 'Lilavati Hospital', 
+      'Kokilaben Dhirubhai Ambani Hospital', 'NIMHANS', 'Manipal Hospital', 
+      'Apollo Hospitals', 'NIMS Hyderabad', 'Yashoda Hospitals', 
+      'Rajiv Gandhi Government General Hospital', 'MIOT International', 
+      'SSKM Hospital', 'KGMU Lucknow', 'Medanta', 'PGIMER Chandigarh', 
+      'AIIMS Bhopal', 'AIIMS Patna', 'AIIMS Bhubaneswar', 'AIIMS Nagpur', 
+      'IMS BHU', 'Amrita Hospital', 'Aster Medcity'
+    ];
+
+    const outcomesList = [
+      'PATIENT_TREATED', 'PATIENT_TRANSPORTED', 'STABILIZED', 
+      'ADMITTED', 'DISCHARGED', 'TRANSFERRED', 'REFERRED', 'RESOLVED_ON_SCENE'
+    ];
+
+    // Build weighted array for categories
+    let weightedCategories = [];
+    categoriesList.forEach(c => {
+      for(let i=0; i<c.weight; i++) {
+        weightedCategories.push(c.cat);
+      }
+    });
+
+    const yearsDistribution = [
+      { year: 2020, count: 123 },
+      { year: 2021, count: 99 },
+      { year: 2022, count: 106 },
+      { year: 2023, count: 128 },
+      { year: 2024, count: 126 },
+      { year: 2025, count: 101 },
+      { year: 2026, count: 67 }
+    ];
+
+    console.log('Generating exactly 750 historical incidents...');
     let addedCount = 0;
     
-    for (let i = 1; i <= 500; i++) {
-      const year = 2020 + (i % 7); // Spread across 2020-2026
-      const month = (i % 12);
-      const day = (i % 28) + 1;
-      
-      const city = cities[i % cities.length];
-      const category = categories[i % categories.length];
-      
-      let severity = 5;
-      let affectedPeople = 1;
-      let desc = 'Medical emergency';
-      
-      if (category === 'ROAD_ACCIDENT') {
-        severity = 7 + (i % 4);
-        affectedPeople = 1 + (i % 4);
-        desc = `Road accident in ${city.name} involving multiple vehicles.`;
-      } else if (category === 'FIRE') {
-        severity = 8 + (i % 3);
-        affectedPeople = 2 + (i % 10);
-        desc = `Building fire reported in ${city.name} industrial area.`;
-      } else if (category === 'NATURAL_DISASTER') {
-        severity = 10;
-        affectedPeople = 10 + (i % 50);
-        desc = `Flooding/disaster incident in ${city.name}.`;
-      } else if (category === 'VIOLENCE') {
-        severity = 6 + (i % 3);
-        affectedPeople = 1 + (i % 2);
-        desc = `Assault/violence reported near city center.`;
-      } else {
-        if (i % 3 === 0) {
-          severity = 9;
-          desc = `Cardiac emergency, patient unconscious.`;
-        } else if (i % 5 === 0) {
-          severity = 8;
-          desc = `Stroke symptoms reported.`;
+    // Generate incidents per year
+    for (const yDist of yearsDistribution) {
+      for (let i = 0; i < yDist.count; i++) {
+        const year = yDist.year;
+        const month = Math.floor(Math.random() * 12);
+        const day = Math.floor(Math.random() * 28) + 1; // simple days
+        
+        const cityObj = citiesData[Math.floor(Math.random() * citiesData.length)];
+        const category = weightedCategories[Math.floor(Math.random() * weightedCategories.length)];
+        const hospitalName = hospitals[Math.floor(Math.random() * hospitals.length)];
+        
+        // Severity distribution: CRITICAL 18%, HIGH 32%, MODERATE 50%
+        let severityScore = 0;
+        let severityClass = '';
+        let ambulanceType = '';
+        let affectedPeople = 1;
+        const sevRand = Math.random();
+        
+        if (sevRand < 0.18) {
+          severityClass = 'CRITICAL';
+          severityScore = 9 + Math.random(); // 9-10
+          ambulanceType = 'ALS';
+          affectedPeople = Math.floor(Math.random() * 4) + 1;
+        } else if (sevRand < 0.50) {
+          severityClass = 'HIGH';
+          severityScore = 7 + Math.random() * 1.9; // 7-8.9
+          ambulanceType = Math.random() > 0.5 ? 'ALS' : 'BLS';
+          affectedPeople = Math.floor(Math.random() * 2) + 1;
+        } else {
+          severityClass = 'MODERATE';
+          severityScore = 4 + Math.random() * 2.9; // 4-6.9
+          ambulanceType = 'BLS';
         }
-      }
 
-      // Generate realistic timeline
-      const reportedAt = new Date(year, month, day, 10 + (i % 10), i % 60);
-      const dispatchTime = new Date(reportedAt.getTime() + (2 + (i % 5)) * 60000); // 2-7 min later
-      const arrivedAt = new Date(dispatchTime.getTime() + (5 + (i % 15)) * 60000); // 5-20 min later
-      const hospitalArr = new Date(arrivedAt.getTime() + (10 + (i % 20)) * 60000); // 10-30 min later
-      const resolvedAt = new Date(hospitalArr.getTime() + (30 + (i % 60)) * 60000); // 30-90 min later
-      
-      const incidentId = `HIST-DEMO-${year}-${String(i).padStart(4, '0')}`;
-      
-      // UPSERT to prevent duplicates
-      const result = await Incident.updateOne(
-        { incidentId },
-        {
-          $setOnInsert: {
-            incidentId,
-            category,
-            description: desc,
-            location: {
-              type: 'Point',
-              coordinates: [city.lng + (Math.random() * 0.1 - 0.05), city.lat + (Math.random() * 0.1 - 0.05)]
-            },
-            address: `Historical Location, ${city.name}`,
-            city: city.name,
-            state: city.state,
-            severity,
-            affectedPeople,
-            isMedicalEmergency: ['MEDICAL_EMERGENCY', 'ROAD_ACCIDENT', 'CARDIAC', 'TRAUMA'].includes(category),
-            status: 'RESOLVED',
-            source: 'SYNTHETIC_DEMO',
-            reportedAt,
-            dispatchTime,
-            arrivedOnSceneTime: arrivedAt,
-            hospitalArrivalTime: hospitalArr,
-            resolvedAt,
-            createdAt: reportedAt,
-            updatedAt: resolvedAt,
-            hospitalName: hospitals[i % hospitals.length],
-            ambulanceType: severity > 7 ? 'ALS (Advanced Life Support)' : ambulanceTypes[i % ambulanceTypes.length],
-            outcome: severity === 10 ? (i % 3 === 0 ? 'FATALITY' : 'CRITICAL_TRANSFER') : 'TREATED_AND_DISCHARGED',
-            aiAnalysis: { hospitalAssigned: hospitals[i % hospitals.length] } 
-          }
-        },
-        { upsert: true, timestamps: false }
-      );
-      
-      if (result.upsertedCount > 0) {
-        addedCount++;
+        // Special overrides
+        if (category === 'ROAD_ACCIDENT' || category === 'TRAUMA') {
+          if (severityClass === 'CRITICAL') ambulanceType = 'TRAUMA';
+          if (category === 'ROAD_ACCIDENT') affectedPeople += Math.floor(Math.random() * 3);
+        } else if (category === 'NEONATAL') {
+          ambulanceType = 'NEONATAL';
+        }
+
+        const stateAbbr = cityObj.state.substring(0, 2).toUpperCase();
+        const randAmbNum = Math.floor(1000 + Math.random() * 9000);
+        const ambulanceId = `AMB-${stateAbbr}-${randAmbNum}`;
+        const outcome = outcomesList[Math.floor(Math.random() * outcomesList.length)];
+        
+        // Timeline generation (Sequential logic)
+        const reportedAt = new Date(year, month, day, Math.floor(Math.random() * 24), Math.floor(Math.random() * 60));
+        
+        // AI Verification (5 to 60 seconds after reported)
+        const aiVerifiedAt = new Date(reportedAt.getTime() + (Math.floor(Math.random() * 55) + 5) * 1000);
+        
+        // Dispatch (1 to 5 mins after AI verified)
+        const dispatchTime = new Date(aiVerifiedAt.getTime() + (Math.floor(Math.random() * 4 * 60) + 60) * 1000);
+        
+        // Arrived on Scene (4 to 25 mins after dispatch)
+        const arrivedAt = new Date(dispatchTime.getTime() + (Math.floor(Math.random() * 21) + 4) * 60000);
+        
+        // Hospital Arrival (10 to 45 mins after arrived on scene)
+        const hospitalArr = new Date(arrivedAt.getTime() + (Math.floor(Math.random() * 35) + 10) * 60000);
+        
+        // Resolved (20 to 90 mins after hospital arrival)
+        const resolvedAt = new Date(hospitalArr.getTime() + (Math.floor(Math.random() * 70) + 20) * 60000);
+        
+        const incidentId = `HIST-SYN-${year}-${String(i).padStart(4, '0')}`;
+        const desc = `Historical emergency: ${category} reported in ${cityObj.city}`;
+
+        const result = await Incident.updateOne(
+          { incidentId },
+          {
+            $setOnInsert: {
+              incidentId,
+              category,
+              description: desc,
+              location: {
+                type: 'Point',
+                coordinates: [cityObj.lng + (Math.random() * 0.05 - 0.025), cityObj.lat + (Math.random() * 0.05 - 0.025)]
+              },
+              address: `Generated Location, ${cityObj.city}`,
+              city: cityObj.city,
+              state: cityObj.state,
+              severity: Math.floor(severityScore),
+              severityScore,
+              affectedPeople,
+              isMedicalEmergency: ['MEDICAL', 'CARDIAC', 'TRAUMA', 'RESPIRATORY', 'STROKE'].includes(category),
+              status: 'RESOLVED',
+              dataSource: 'SYNTHETIC_DEMO',
+              source: 'SYNTHETIC_DEMO',
+              
+              // Timeline fields
+              reportedAt,
+              aiVerifiedAt,
+              dispatchTime,
+              arrivedOnSceneTime: arrivedAt,
+              hospitalArrivalTime: hospitalArr,
+              resolvedAt,
+              createdAt: reportedAt,
+              updatedAt: resolvedAt,
+              
+              // Analytics fields
+              hospitalName,
+              ambulanceType,
+              ambulanceId,
+              outcome,
+              aiAnalysis: {
+                confidence: 85 + Math.random() * 14,
+                category,
+                severity: severityClass
+              }
+            }
+          },
+          { upsert: true, timestamps: false }
+        );
+        
+        if (result.upsertedCount > 0) {
+          addedCount++;
+        }
       }
     }
     
-    console.log(`Finished. Added ${addedCount} new historical incidents.`);
-    
+    console.log(`Finished. Added ${addedCount} new historical incidents out of 750.`);
     process.exit(0);
   } catch (error) {
     console.error('Seeding failed:', error);

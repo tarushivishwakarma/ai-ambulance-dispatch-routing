@@ -134,9 +134,52 @@ const updateIncidentStatus = async (req, res, next) => {
   }
 };
 
+// @desc    Get historical incidents with filtering (Reports view)
+// @route   GET /api/incidents/historical
+// @access  Private
+const getHistoricalIncidents = async (req, res, next) => {
+  try {
+    const { year, city, state, severity, category, ambulanceType, outcome, limit } = req.query;
+    
+    let filter = { status: 'RESOLVED' };
+    
+    if (year) {
+      const startDate = new Date(`${year}-01-01T00:00:00.000Z`);
+      const endDate = new Date(`${year}-12-31T23:59:59.999Z`);
+      filter.reportedAt = { $gte: startDate, $lte: endDate };
+    }
+    
+    if (city) filter.city = city;
+    if (state) filter.state = state;
+    
+    if (severity) {
+      if (severity === 'CRITICAL') filter.severity = { $gte: 9 };
+      else if (severity === 'HIGH') filter.severity = { $gte: 7, $lt: 9 };
+      else if (severity === 'MODERATE') filter.severity = { $lt: 7 };
+    }
+    
+    if (category) filter.category = category;
+    if (ambulanceType) filter.ambulanceType = ambulanceType;
+    if (outcome) filter.outcome = outcome;
+
+    let query = Incident.find(filter).sort('-reportedAt');
+    
+    if (limit) {
+      query = query.limit(parseInt(limit));
+    }
+    
+    const incidents = await query;
+    
+    res.json({ success: true, count: incidents.length, data: incidents });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createIncident,
   getIncidents,
   getIncidentById,
-  updateIncidentStatus
+  updateIncidentStatus,
+  getHistoricalIncidents
 };

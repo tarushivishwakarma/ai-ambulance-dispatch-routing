@@ -80,12 +80,39 @@ class ApiService {
     );
   }
 
-  // --- Analytics ---
+  // --- Analytics & Historical Data ---
+  async getHistoricalIncidents(filters = {}, token) {
+    // Convert filters to query string
+    const query = new URLSearchParams(filters).toString();
+    try {
+      const response = await axios.get(`${API_URL}/incidents/historical?${query}`, { headers: { Authorization: `Bearer ${token}` } });
+      return response.data.data || [];
+    } catch (error) {
+      console.error("Failed to fetch backend historical data, falling back to demo", error);
+      // Fallback dummy record just in case backend is completely unreachable
+      return this.demoStore.historicalIncidents || [
+        {
+          _id: "DUMMY-123",
+          incidentId: "DUMMY-123",
+          city: "New Delhi",
+          category: "ROAD_ACCIDENT",
+          severity: 8,
+          reportedAt: new Date().toISOString(),
+          status: "RESOLVED",
+          source: "SYNTHETIC_DEMO"
+        }
+      ];
+    }
+  }
+
   async getAnalytics(token) {
-    return this.execute(
-      () => axios.get(`${API_URL}/analytics/overview`, { headers: { Authorization: `Bearer ${token}` } }),
-      () => this.demoStore.getAnalytics()
-    );
+    try {
+      const response = await axios.get(`${API_URL}/analytics/overview`, { headers: { Authorization: `Bearer ${token}` } });
+      return response.data.data;
+    } catch (error) {
+      console.error("Failed to fetch backend analytics, falling back to demo", error);
+      return this.demoStore.getAnalytics();
+    }
   }
 
   // --- Road Conditions ---

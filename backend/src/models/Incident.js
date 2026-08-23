@@ -39,12 +39,15 @@ const incidentSchema = new mongoose.Schema({
   resolvedAt: { type: Date },
   
   // Historical Analytics & CSV Reporting Fields
+  aiVerifiedAt: { type: Date },
   dispatchTime: { type: Date },
   arrivedOnSceneTime: { type: Date },
   hospitalArrivalTime: { type: Date },
   outcome: { type: String },
   hospitalName: { type: String },
-  ambulanceType: { type: String }
+  ambulanceId: { type: String },
+  ambulanceType: { type: String },
+  dataSource: { type: String, default: 'USER' }
 }, { timestamps: true });
 
 incidentSchema.index({ location: '2dsphere' });

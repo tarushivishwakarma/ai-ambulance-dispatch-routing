@@ -13,38 +13,33 @@ const ReportsView = () => {
   });
 
   useEffect(() => {
-    apiService.getIncidents().then(data => {
-      // Show all RESOLVED, specifically SYNTHETIC_DEMO ones as historical 
-      const historical = data.filter(i => i.status === 'RESOLVED' || i.source === 'SYNTHETIC_DEMO');
-      setIncidents(historical);
+    setLoading(true);
+    // Convert 'ALL' to undefined for backend
+    const queryFilters = {};
+    if (filters.year !== 'ALL') queryFilters.year = filters.year;
+    if (filters.city !== 'ALL') queryFilters.city = filters.city;
+    if (filters.severity !== 'ALL') queryFilters.severity = filters.severity;
+    if (filters.category !== 'ALL') queryFilters.category = filters.category;
+    if (filters.ambulanceType && filters.ambulanceType !== 'ALL') queryFilters.ambulanceType = filters.ambulanceType;
+    if (filters.outcome && filters.outcome !== 'ALL') queryFilters.outcome = filters.outcome;
+
+    apiService.getHistoricalIncidents(queryFilters).then(data => {
+      setIncidents(data || []);
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
       setLoading(false);
     });
-  }, []);
+  }, [filters]);
 
-  const years = useMemo(() => {
-    const ys = new Set(incidents.map(i => new Date(i.reportedAt || i.createdAt).getFullYear()).filter(y => !isNaN(y)));
-    return Array.from(ys).sort();
-  }, [incidents]);
-  
-  const cities = useMemo(() => Array.from(new Set(incidents.map(i => i.city).filter(Boolean))).sort(), [incidents]);
-  const categories = useMemo(() => Array.from(new Set(incidents.map(i => i.category).filter(Boolean))).sort(), [incidents]);
+  // We fetch dynamic years/cities from the full dataset initially, so we'll just hardcode or let them be provided for the demo.
+  // The easiest is just using a predefined list for filters to avoid extra API calls.
+  const years = ['2020', '2021', '2022', '2023', '2024', '2025', '2026'];
+  const cities = ['All India', 'New Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Lucknow', 'Jaipur', 'Ahmedabad', 'Pune', 'Surat', 'Indore', 'Bhopal', 'Patna', 'Chandigarh', 'Dehradun', 'Guwahati', 'Bhubaneswar', 'Nagpur', 'Nashik', 'Agra', 'Varanasi', 'Amritsar', 'Ludhiana', 'Coimbatore', 'Visakhapatnam', 'Kochi', 'Thiruvananthapuram', 'Ranchi'].sort();
+  const categories = ['ROAD_ACCIDENT', 'MEDICAL', 'CARDIAC', 'FIRE', 'TRAUMA', 'FALL', 'STROKE', 'RESPIRATORY', 'INDUSTRIAL', 'OTHER'].sort();
 
-  const filteredIncidents = useMemo(() => {
-    return incidents.filter(i => {
-      const yearMatch = filters.year === 'ALL' || new Date(i.reportedAt || i.createdAt).getFullYear().toString() === filters.year;
-      const cityMatch = filters.city === 'ALL' || i.city === filters.city;
-      const sevMatch = filters.severity === 'ALL' 
-        ? true 
-        : filters.severity === 'CRITICAL' ? i.severity >= 9 
-        : filters.severity === 'HIGH' ? i.severity >= 7 && i.severity < 9 
-        : i.severity < 7;
-      const catMatch = filters.category === 'ALL' || i.category === filters.category;
-      
-      return yearMatch && cityMatch && sevMatch && catMatch;
-    });
-  }, [incidents, filters]);
-
-  // KPIs calculation
+  // KPIs calculation (since API returns the filtered set)
+  const filteredIncidents = incidents;
   const totalIncidents = filteredIncidents.length;
   
   const getMinutes = (start, end) => {
@@ -52,13 +47,13 @@ const ReportsView = () => {
     return (new Date(end) - new Date(start)) / 60000;
   };
 
-  const responseTimes = filteredIncidents.map(i => getMinutes(i.dispatchTime || i.reportedAt || i.createdAt, i.arrivedOnSceneTime)).filter(t => t !== null && t > 0);
+  const responseTimes = filteredIncidents.map(i => getMinutes(i.reportedAt, i.arrivedOnSceneTime)).filter(t => t !== null && t > 0);
   const avgResponseTime = responseTimes.length ? (responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length).toFixed(1) : '--';
 
-  const resolutionTimes = filteredIncidents.map(i => getMinutes(i.reportedAt || i.createdAt, i.resolvedAt || i.updatedAt)).filter(t => t !== null && t > 0);
+  const resolutionTimes = filteredIncidents.map(i => getMinutes(i.reportedAt, i.resolvedAt)).filter(t => t !== null && t > 0);
   const avgResolutionTime = resolutionTimes.length ? (resolutionTimes.reduce((a, b) => a + b, 0) / resolutionTimes.length).toFixed(1) : '--';
 
-  const hospitalArrivalTimes = filteredIncidents.map(i => getMinutes(i.reportedAt || i.createdAt, i.hospitalArrivalTime)).filter(t => t !== null && t > 0);
+  const hospitalArrivalTimes = filteredIncidents.map(i => getMinutes(i.reportedAt, i.hospitalArrivalTime)).filter(t => t !== null && t > 0);
   const avgHospitalArrivalTime = hospitalArrivalTimes.length ? (hospitalArrivalTimes.reduce((a, b) => a + b, 0) / hospitalArrivalTimes.length).toFixed(1) : '--';
 
   const handleExportCSV = () => {
@@ -66,15 +61,15 @@ const ReportsView = () => {
     const headers = [
       'Incident ID', 'Date', 'Year', 'Month', 'City', 'State', 
       'Category', 'Severity', 'Affected People', 'Ambulance ID', 
-      'Ambulance Type', 'Hospital', 'Dispatch Time', 'Response Time', 
-      'Hospital Arrival Time', 'Resolution Time', 'Outcome', 'Status', 'Data Source'
+      'Ambulance Type', 'Hospital', 'Reported At', 'AI Verified At', 'Dispatch Time', 'Arrived On Scene', 
+      'Hospital Arrival Time', 'Resolved At', 'Response Time', 'Hospital Arrival Duration', 'Resolution Time', 'Outcome', 'Status', 'Data Source'
     ];
     
     const rows = filteredIncidents.map(i => {
-      const rTime = getMinutes(i.dispatchTime || i.reportedAt || i.createdAt, i.arrivedOnSceneTime);
-      const resTime = getMinutes(i.reportedAt || i.createdAt, i.resolvedAt || i.updatedAt);
-      const hTime = getMinutes(i.reportedAt || i.createdAt, i.hospitalArrivalTime);
-      const d = new Date(i.reportedAt || i.createdAt);
+      const rTime = getMinutes(i.reportedAt, i.arrivedOnSceneTime);
+      const resTime = getMinutes(i.reportedAt, i.resolvedAt);
+      const hTime = getMinutes(i.arrivedOnSceneTime, i.hospitalArrivalTime); // Arrival on scene to hospital arrival
+      const d = new Date(i.reportedAt);
       
       return [
         i.incidentId || i._id,
@@ -84,18 +79,23 @@ const ReportsView = () => {
         i.city || '--',
         i.state || '--',
         i.category,
-        i.severity,
+        i.severityScore ? i.severityScore.toFixed(1) : i.severity,
         i.affectedPeople || 1,
-        i.assignedAmbulance || '--',
+        i.ambulanceId || '--',
         i.ambulanceType || '--',
-        i.hospitalName || i.aiAnalysis?.hospitalAssigned || '--',
+        i.hospitalName || '--',
+        i.reportedAt ? new Date(i.reportedAt).toISOString() : '--',
+        i.aiVerifiedAt ? new Date(i.aiVerifiedAt).toISOString() : '--',
         i.dispatchTime ? new Date(i.dispatchTime).toISOString() : '--',
+        i.arrivedOnSceneTime ? new Date(i.arrivedOnSceneTime).toISOString() : '--',
+        i.hospitalArrivalTime ? new Date(i.hospitalArrivalTime).toISOString() : '--',
+        i.resolvedAt ? new Date(i.resolvedAt).toISOString() : '--',
         rTime ? rTime.toFixed(1) : '--',
         hTime ? hTime.toFixed(1) : '--',
         resTime ? resTime.toFixed(1) : '--',
-        i.outcome || 'TREATED_AND_DISCHARGED',
+        i.outcome || '--',
         i.status,
-        i.source || 'SYSTEM'
+        i.dataSource || i.source || 'SYSTEM'
       ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
     });
 

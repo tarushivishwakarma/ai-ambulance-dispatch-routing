@@ -8,9 +8,11 @@ const AnalyticsDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    apiService.getIncidents().then(data => {
-      const historical = data.filter(i => i.status === 'RESOLVED' || i.source === 'SYNTHETIC_DEMO');
-      setDbHistorical(historical);
+    apiService.getHistoricalIncidents().then(data => {
+      setDbHistorical(data || []);
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
       setLoading(false);
     });
   }, []);
