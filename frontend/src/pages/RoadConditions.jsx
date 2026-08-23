@@ -39,7 +39,7 @@ const RoadConditions = () => {
       {/* Header & Filters */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-primary-900/80 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-warning/20 text-warning p-2 rounded border border-warning/30">
+          <div className="bg-warning/10 text-warning p-2 rounded border border-warning/20">
             <Navigation size={20} className="animate-pulse" />
           </div>
           <div>
@@ -89,7 +89,7 @@ const RoadConditions = () => {
               <div className="text-center text-text-muted mt-10 text-xs font-bold uppercase tracking-wider">No blockages reported in region.</div>
             ) : (
               filteredConditions.map((condition) => (
-                <div key={condition._id} className="bg-primary-900/80 border border-warning/30 rounded p-3 hover:border-warning/60 transition-colors shadow-lg shadow-black/20">
+                <div key={condition._id} className="bg-primary-900/80 border border-warning/20 rounded p-3 hover:border-warning/60 transition-colors shadow-sm">
                   <div className="flex justify-between items-start mb-2">
                     <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border bg-warning/10 text-warning border-warning/20">
                       ACTIVE BLOCKAGE

@@ -46,7 +46,7 @@ const DispatchBoard = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-primary-800/60 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-warning/20 text-warning p-2 rounded border border-warning/30">
+          <div className="bg-warning/10 text-warning p-2 rounded border border-warning/20">
             <Radio size={20} className="animate-pulse" />
           </div>
           <div>
@@ -100,7 +100,7 @@ const DispatchBoard = () => {
               </div>
             ) : (
               pendingIncidents.map(inc => (
-                <div key={inc._id} className="bg-primary-900/80 border border-emergency/20 rounded p-3 hover:border-emergency/40 transition-colors shadow-lg relative overflow-hidden">
+                <div key={inc._id} className="bg-primary-900/80 border border-emergency/20 rounded p-3 hover:border-emergency/40 transition-colors shadow-sm relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-emergency" />
                   <div className="pl-2">
                     <div className="flex justify-between items-start mb-1.5">
@@ -119,7 +119,7 @@ const DispatchBoard = () => {
                         return (
                           <button
                             onClick={() => handleDispatch(inc._id, nearestAmb._id)}
-                            className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 bg-operational/20 hover:bg-operational/30 border border-operational/30 text-operational text-[10px] font-bold uppercase tracking-wider rounded transition-colors"
+                            className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 bg-operational/10 hover:bg-operational/30 border border-operational/20 text-operational text-[10px] font-bold uppercase tracking-wider rounded transition-colors"
                           >
                             Dispatch {nearestAmb._id.substring(0, 10)} <ArrowRight size={10} />
                           </button>
@@ -162,7 +162,7 @@ const DispatchBoard = () => {
                 <div key={amb._id} className="bg-primary-900/80 border border-primary-600/40 rounded p-3 hover:border-operational/40 transition-colors">
                   <div className="flex justify-between items-start mb-1.5">
                     <h3 className="text-xs font-bold text-text-main truncate max-w-[140px]">{amb._id}</h3>
-                    <span className="px-1.5 py-0.5 bg-operational/10 text-operational border border-operational/30 rounded text-[9px] font-bold uppercase">Ready</span>
+                    <span className="px-1.5 py-0.5 bg-operational/10 text-operational border border-operational/20 rounded text-[9px] font-bold uppercase">Ready</span>
                   </div>
                   <p className="text-[10px] text-text-muted flex items-center gap-2 mb-1">
                     <span className="text-info font-bold uppercase tracking-widest">{amb.capability || 'ALS'}</span>

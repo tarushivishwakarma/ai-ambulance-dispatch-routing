@@ -36,7 +36,7 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
   const items = role === 'DRIVER' ? driverNavItems : navItems;
 
   return (
-    <div className="flex h-screen bg-primary-900 text-text-main overflow-hidden font-sans selection:bg-info/20 selection:text-info">
+    <div className="flex h-screen bg-primary-900 text-text-main overflow-hidden font-sans selection:bg-info/10 selection:text-info">
       {/* Sidebar */}
       <aside className="w-60 bg-primary-800 border-r border-primary-700 flex flex-col z-20 shadow-sm">
 
@@ -119,14 +119,12 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
         {/* Background Image Layer */}
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 bg-primary-900">
           <img 
             src="/images/landing-bg.jpg" 
             alt="EOC Background" 
-            className="w-full h-full object-cover opacity-10 grayscale"
+            className="w-full h-full object-cover opacity-[0.03] grayscale mix-blend-multiply"
           />
-          <div className="absolute inset-0 bg-primary-900/90" />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-900/40 via-transparent to-primary-900/60" />
         </div>
 
         {/* Top Header */}

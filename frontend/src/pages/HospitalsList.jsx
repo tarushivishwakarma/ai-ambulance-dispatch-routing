@@ -28,7 +28,7 @@ const HospitalsList = () => {
       {/* Header & Filters */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-primary-800/60 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-info/20 text-info p-2 rounded border border-info/30">
+          <div className="bg-info/10 text-info p-2 rounded border border-info/20">
             <Hospital size={20} />
           </div>
           <div>
@@ -116,7 +116,7 @@ const HospitalsList = () => {
                   <tr><td colSpan="5" className="p-8 text-center text-xs font-bold text-text-muted uppercase">No facilities match current filters.</td></tr>
                 ) : (
                   filteredHospitals.map((hospital) => (
-                    <tr key={hospital._id} className="hover:bg-primary-700/20 transition-colors">
+                    <tr key={hospital._id} className="hover:bg-primary-600 transition-colors">
                       <td className="p-3">
                         <div className="text-sm font-bold text-text-main truncate max-w-[180px]">{hospital.name}</div>
                         <div className="text-[10px] text-text-muted flex items-center gap-1 mt-0.5 font-medium">
@@ -152,8 +152,8 @@ const HospitalsList = () => {
                       <td className="p-3">
                         <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${
                           hospital.status === 'AVAILABLE'
-                            ? 'bg-operational/10 text-operational border-operational/30'
-                            : 'bg-emergency/10 text-emergency border-emergency/30'
+                            ? 'bg-operational/10 text-operational border-operational/20'
+                            : 'bg-emergency/10 text-emergency border-emergency/20'
                         }`}>
                           {hospital.status}
                         </span>

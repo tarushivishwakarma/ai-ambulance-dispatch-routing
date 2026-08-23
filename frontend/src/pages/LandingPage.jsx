@@ -42,7 +42,7 @@ const LandingPage = () => {
             
             <button 
               onClick={handleSkipIntro}
-              className="absolute bottom-10 right-10 px-6 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest rounded transition-all z-10 shadow-xl"
+              className="absolute bottom-10 right-10 px-6 py-2.5 bg-primary-800 hover:bg-primary-600 border border-border text-text-main shadow-sm text-[10px] font-bold uppercase tracking-widest rounded transition-all z-10 shadow-xl"
             >
               Skip Intro
             </button>
@@ -88,7 +88,7 @@ const LandingPage = () => {
           </Link>
           <Link
             to="/login"
-            className="px-5 py-2 bg-emergency/90 hover:bg-emergency text-white text-[11px] font-bold uppercase tracking-widest rounded transition-all shadow-lg shadow-emergency/20"
+            className="px-5 py-2 bg-emergency hover:bg-emergency-hover text-white shadow-sm text-[11px] font-bold uppercase tracking-widest rounded transition-all shadow-sm"
           >
             Authority Access
           </Link>
@@ -104,7 +104,7 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-emergency/15 border border-emergency/30 text-emergency text-[10px] font-bold tracking-widest uppercase mb-6"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-emergency/15 border border-emergency/20 text-emergency text-[10px] font-bold tracking-widest uppercase mb-6"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-emergency animate-pulse" />
             Emergency Operations Center
@@ -138,14 +138,14 @@ const LandingPage = () => {
           >
             <Link
               to="/report"
-              className="flex items-center justify-center gap-2 px-8 py-3.5 bg-emergency hover:bg-emergency-hover text-white text-sm font-bold tracking-widest rounded shadow-lg shadow-emergency/30 transition-all uppercase"
+              className="flex items-center justify-center gap-2 px-8 py-3.5 bg-emergency hover:bg-emergency-hover text-white text-sm font-bold tracking-widest rounded shadow-sm shadow-emergency/30 transition-all uppercase"
             >
               <ShieldAlert size={16} />
               Report Emergency
             </Link>
             <Link
               to="/login"
-              className="flex items-center justify-center gap-2 px-8 py-3.5 bg-primary-700 hover:bg-primary-600 border border-primary-500 text-white text-sm font-bold tracking-widest rounded transition-all uppercase shadow-lg"
+              className="flex items-center justify-center gap-2 px-8 py-3.5 bg-white hover:bg-primary-600 border border-primary-700 text-text-main text-sm font-bold tracking-widest rounded transition-all uppercase shadow-sm"
             >
               Authority Demo Login
               <ChevronRight size={14} />

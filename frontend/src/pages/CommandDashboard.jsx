@@ -8,7 +8,7 @@ import { isSystemDemoMode } from '../services/apiService';
 const CITIES = ['All India', 'New Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Lucknow', 'Jaipur', 'Ahmedabad', 'Pune'];
 
 const KpiCard = ({ label, value, color, icon: Icon, sub }) => (
-  <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg p-4 flex flex-col gap-1">
+  <div className="bg-primary-800 border border-primary-700 rounded-lg p-4 flex flex-col gap-1 shadow-sm hover:shadow-md transition-shadow">
     <div className="flex items-center justify-between">
       <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted">{label}</span>
       <Icon size={14} className={color} />
@@ -51,9 +51,9 @@ const CommandDashboard = () => {
       <div className="flex flex-col h-full w-full max-w-[1920px] mx-auto p-4 space-y-4">
 
       {/* Header */}
-      <div className="flex items-center justify-between bg-primary-800 p-3 rounded-lg border border-primary-700 shadow-sm">
+      <div className="flex items-center justify-between bg-primary-800 p-4 rounded-lg border border-primary-700 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="bg-emergency/20 text-emergency p-2.5 rounded border border-emergency/30">
+          <div className="bg-emergency/10 text-emergency p-2.5 rounded-lg border border-emergency/20">
             <Activity size={22} className="animate-pulse" />
           </div>
           <div>
@@ -73,17 +73,17 @@ const CommandDashboard = () => {
               Demo Operations Active
             </span>
           )}
-          <div className="flex items-center gap-2 bg-primary-700/60 border border-primary-600/50 rounded px-3 py-1.5">
-            <Search size={12} className="text-text-muted" />
+          <div className="flex items-center gap-2 bg-primary-800 border border-primary-700 rounded px-3 py-2 shadow-sm">
+            <Search size={14} className="text-text-muted" />
             <select
               value={activeCityFilter}
               onChange={e => setCityFilter(e.target.value)}
-              className="bg-transparent text-[10px] font-bold text-text-main uppercase tracking-wider outline-none border-none cursor-pointer"
+              className="bg-transparent text-[11px] font-bold text-text-main uppercase tracking-wider outline-none border-none cursor-pointer"
             >
               {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          <button className="flex items-center gap-2 px-5 py-2 bg-emergency text-white rounded text-[11px] font-bold uppercase tracking-wider hover:bg-emergency-hover transition-colors shadow-lg shadow-emergency/20">
+          <button className="flex items-center gap-2 px-5 py-2.5 bg-emergency text-white rounded-md text-[11px] font-bold uppercase tracking-wider hover:bg-emergency-hover transition-colors shadow-sm hover:shadow active:translate-y-px">
             <AlertTriangle size={14} /> Declare Emergency
           </button>
         </div>

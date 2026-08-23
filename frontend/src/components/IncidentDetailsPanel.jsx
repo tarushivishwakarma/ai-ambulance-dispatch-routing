@@ -8,7 +8,7 @@ const TimelineStep = ({ title, time, active, isLast, icon: Icon, completed }) =>
     )}
     <div className={`relative z-10 w-7 h-7 flex items-center justify-center rounded-full border-2 ${
       completed ? 'bg-operational text-white border-operational' :
-      active ? 'bg-info/20 text-info border-info animate-pulse' :
+      active ? 'bg-info/10 text-info border-info animate-pulse' :
       'bg-primary-800 text-text-muted border-primary-700'
     }`}>
       <Icon size={12} />
@@ -80,8 +80,8 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
               <div className="flex justify-between items-start mb-2">
                 <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{incident.incidentId || incident._id}</span>
                 <span className={`px-2 py-0.5 rounded text-[9px] font-bold tracking-widest border uppercase ${
-                  incident.status === 'RESOLVED' ? 'bg-operational/10 text-operational border-operational/30' :
-                  'bg-emergency/10 text-emergency border-emergency/30'
+                  incident.status === 'RESOLVED' ? 'bg-operational/10 text-operational border-operational/20' :
+                  'bg-emergency/10 text-emergency border-emergency/20'
                 }`}>
                   {incident.status.replace('_', ' ')}
                 </span>
@@ -108,7 +108,7 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
 
           {/* AI Analysis */}
           {incident.aiAnalysis && (
-            <div className="bg-info/10 border border-info/30 rounded-lg p-4 space-y-2">
+            <div className="bg-info/10 border border-info/20 rounded-lg p-4 space-y-2">
               <h3 className="text-[10px] font-bold text-info uppercase tracking-widest flex items-center gap-1.5 mb-3">
                 <BrainCircuit size={12} /> AI Assessment
               </h3>

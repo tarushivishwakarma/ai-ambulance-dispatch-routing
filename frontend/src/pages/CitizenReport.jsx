@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Camera, AlertCircle, MapPin, Send } from 'lucide-react';
+import { Camera, AlertCircle, MapPin, Send, X } from 'lucide-react';
 import { apiService } from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 
 const CitizenReport = () => {
   const [description, setDescription] = useState('');
   const [address, setAddress] = useState('Hazratganj, Lucknow (GPS Auto-detected)');
+  const [media, setMedia] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -16,7 +17,7 @@ const CitizenReport = () => {
     try {
       await apiService.createIncident({
         category: 'ROAD_ACCIDENT',
-        description,
+        description: description + (media ? ' [Includes Photo Evidence]' : ''),
         address,
         location: { type: 'Point', coordinates: [80.9439, 26.8488] },
         severity: 8,
@@ -29,6 +30,15 @@ const CitizenReport = () => {
       alert(error.message || 'Failed to report emergency');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleMediaChange = (e) => {
+    const file = e.target.files[0];
+    if(file) {
+      const reader = new FileReader();
+      reader.onload = (event) => setMedia(event.target.result);
+      reader.readAsDataURL(file);
     }
   };
 
@@ -70,11 +80,33 @@ const CitizenReport = () => {
           </label>
         </div>
 
-        <div className="bg-primary-800 border border-primary-700 rounded-lg p-6 text-center border-dashed shadow-sm">
-          <Camera size={32} className="mx-auto text-text-muted mb-2" />
-          <p className="text-sm text-text-muted font-medium mb-1">Attach Photo Evidence (Optional)</p>
-          <p className="text-[10px] text-text-muted uppercase tracking-wider">Helps AI determine severity instantly</p>
-        </div>
+        <label className="bg-primary-800 border border-primary-700 rounded-lg p-6 text-center border-dashed shadow-sm cursor-pointer hover:bg-primary-600 block transition-colors">
+          <input 
+            type="file" 
+            accept="image/*" 
+            capture="environment" 
+            className="hidden" 
+            onChange={handleMediaChange}
+          />
+          {media ? (
+            <div className="mt-2 relative inline-block">
+               <img src={media} alt="Evidence" className="max-h-48 mx-auto rounded-lg shadow-sm" />
+               <button 
+                 type="button" 
+                 onClick={(e) => { e.preventDefault(); setMedia(null); }} 
+                 className="absolute -top-2 -right-2 bg-emergency text-white rounded-full p-1 shadow-md hover:scale-105 transition-transform"
+               >
+                 <X size={14}/>
+               </button>
+            </div>
+          ) : (
+            <>
+              <Camera size={32} className="mx-auto text-text-muted mb-2" />
+              <p className="text-sm text-text-muted font-medium mb-1">Attach Photo Evidence (Optional)</p>
+              <p className="text-[10px] text-text-muted uppercase tracking-wider">Capture or select an image</p>
+            </>
+          )}
+        </label>
 
         <button 
           type="submit" 

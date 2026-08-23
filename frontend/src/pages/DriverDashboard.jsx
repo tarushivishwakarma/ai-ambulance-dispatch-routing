@@ -53,13 +53,13 @@ const DriverDashboard = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button 
                 onClick={() => updateAmbulanceStatus(ambulance._id, 'EN_ROUTE')}
-                className={`py-3 rounded-md font-bold text-sm uppercase transition-all ${ambulance.status === 'EN_ROUTE' ? 'bg-info text-text-main' : 'bg-primary-900 text-info border border-info hover:bg-info/20'}`}
+                className={`py-3 rounded-md font-bold text-sm uppercase transition-all ${ambulance.status === 'EN_ROUTE' ? 'bg-info text-text-main' : 'bg-primary-900 text-info border border-info hover:bg-info/10'}`}
               >
                 En Route
               </button>
               <button 
                 onClick={() => updateAmbulanceStatus(ambulance._id, 'ON_SCENE')}
-                className={`py-3 rounded-md font-bold text-sm uppercase transition-all ${ambulance.status === 'ON_SCENE' ? 'bg-warning text-text-main' : 'bg-primary-900 text-warning border border-warning hover:bg-warning/20'}`}
+                className={`py-3 rounded-md font-bold text-sm uppercase transition-all ${ambulance.status === 'ON_SCENE' ? 'bg-warning text-text-main' : 'bg-primary-900 text-warning border border-warning hover:bg-warning/10'}`}
               >
                 On Scene
               </button>
@@ -68,7 +68,7 @@ const DriverDashboard = () => {
                   updateAmbulanceStatus(ambulance._id, 'AVAILABLE');
                   useDemoStore.getState().updateIncidentStatus(activeIncident._id, 'RESOLVED');
                 }}
-                className="py-3 rounded-md font-bold text-sm uppercase bg-primary-900 text-operational border border-operational hover:bg-operational/20 transition-all"
+                className="py-3 rounded-md font-bold text-sm uppercase bg-primary-900 text-operational border border-operational hover:bg-operational/10 transition-all"
               >
                 Resolve & Clear
               </button>

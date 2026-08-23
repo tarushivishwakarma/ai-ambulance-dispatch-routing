@@ -70,7 +70,7 @@ const AnalyticsDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between bg-primary-800/60 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl">
         <div className="flex items-center gap-3">
-          <div className="bg-info/20 text-info p-2 rounded border border-info/30">
+          <div className="bg-info/10 text-info p-2 rounded border border-info/20">
             <BarChart2 size={20} />
           </div>
           <div>

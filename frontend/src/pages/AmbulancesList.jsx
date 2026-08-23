@@ -6,10 +6,10 @@ import useDemoStore from '../demo/demoStore';
 const CITIES = ['All India', 'New Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Lucknow', 'Jaipur', 'Ahmedabad', 'Pune', 'Bhopal', 'Indore', 'Patna', 'Chandigarh', 'Bhubaneswar', 'Guwahati', 'Kochi', 'Dehradun', 'Nagpur', 'Surat'];
 
 const STATUS_STYLES = {
-  AVAILABLE:    'bg-operational/15 text-operational border-operational/30',
-  EN_ROUTE:     'bg-warning/15 text-warning border-warning/30 animate-pulse',
-  ON_SCENE:     'bg-emergency/15 text-emergency border-emergency/30',
-  TRANSPORTING: 'bg-info/15 text-info border-info/30',
+  AVAILABLE:    'bg-operational/15 text-operational border-operational/20',
+  EN_ROUTE:     'bg-warning/15 text-warning border-warning/20 animate-pulse',
+  ON_SCENE:     'bg-emergency/15 text-emergency border-emergency/20',
+  TRANSPORTING: 'bg-info/15 text-info border-info/20',
   UNAVAILABLE:  'bg-primary-700/60 text-text-muted border-primary-600/50',
   RETURNING:    'bg-primary-700/60 text-text-muted border-primary-600/50',
 };
@@ -37,7 +37,7 @@ const AmbulancesList = () => {
       {/* Header & Filters */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-primary-800/60 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-operational/20 text-operational p-2 rounded border border-operational/30">
+          <div className="bg-operational/10 text-operational p-2 rounded border border-operational/20">
             <Truck size={20} />
           </div>
           <div>
@@ -131,7 +131,7 @@ const AmbulancesList = () => {
                   <tr><td colSpan="5" className="p-8 text-center text-xs font-bold text-text-muted uppercase">No units match current filters.</td></tr>
                 ) : (
                   filteredAmbulances.map((amb) => (
-                    <tr key={amb._id} className="hover:bg-primary-700/20 transition-colors">
+                    <tr key={amb._id} className="hover:bg-primary-600 transition-colors">
                       <td className="p-3">
                         <div className="text-sm font-bold text-text-main">{amb._id}</div>
                         <div className="text-[10px] text-text-muted flex items-center gap-1 mt-0.5 font-medium">

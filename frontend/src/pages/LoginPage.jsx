@@ -34,7 +34,7 @@ const LoginPage = () => {
           style={{ filter: 'brightness(0.6) saturate(1.1)' }}
         />
         {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-900/20 to-primary-900/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary-900/50 to-primary-900" />
         <div className="absolute inset-0 bg-gradient-to-t from-primary-900/80 via-transparent to-transparent" />
 
         {/* Branding overlay */}
@@ -105,7 +105,7 @@ const LoginPage = () => {
           </div>
 
           {error && (
-            <div className="p-4 bg-emergency/10 border border-emergency/30 text-emergency text-sm rounded-lg">
+            <div className="p-4 bg-emergency/10 border border-emergency/20 text-emergency text-sm rounded-lg">
               <span className="font-bold block mb-1 uppercase text-[10px] tracking-widest">Authentication Failed</span>
               {error}
             </div>
@@ -148,7 +148,7 @@ const LoginPage = () => {
             <button
               onClick={handleDemoLogin}
               disabled={isSubmitting}
-              className="w-full py-3 bg-operational hover:bg-operational-hover text-white font-bold uppercase tracking-widest rounded transition-all disabled:opacity-50 shadow-lg text-xs"
+              className="w-full py-3 bg-operational hover:bg-operational-hover text-white font-bold uppercase tracking-widest rounded transition-all disabled:opacity-50 shadow-sm text-xs"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">

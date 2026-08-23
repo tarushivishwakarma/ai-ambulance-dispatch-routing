@@ -12,13 +12,13 @@ const SEV_STYLE = (sev) =>
   : 'bg-info/10 text-info border-info/20';
 
 const STATUS_STYLE = (status) => ({
-  ACTIVE:       'bg-emergency/10 text-emergency border-emergency/30 animate-pulse',
-  PENDING:      'bg-emergency/10 text-emergency border-emergency/30 animate-pulse',
-  ASSIGNED:     'bg-warning/10 text-warning border-warning/30',
-  EN_ROUTE:     'bg-warning/10 text-warning border-warning/30',
-  ON_SCENE:     'bg-info/10 text-info border-info/30',
-  TRANSPORTING: 'bg-info/10 text-info border-info/30',
-  RESOLVED:     'bg-operational/10 text-operational border-operational/30',
+  ACTIVE:       'bg-emergency/10 text-emergency border-emergency/20 animate-pulse',
+  PENDING:      'bg-emergency/10 text-emergency border-emergency/20 animate-pulse',
+  ASSIGNED:     'bg-warning/10 text-warning border-warning/20',
+  EN_ROUTE:     'bg-warning/10 text-warning border-warning/20',
+  ON_SCENE:     'bg-info/10 text-info border-info/20',
+  TRANSPORTING: 'bg-info/10 text-info border-info/20',
+  RESOLVED:     'bg-operational/10 text-operational border-operational/20',
   CANCELLED:    'bg-primary-700/50 text-text-muted border-primary-600/50',
 }[status] || 'bg-primary-700/50 text-text-muted border-primary-600/50');
 
@@ -48,7 +48,7 @@ const IncidentsList = () => {
       {/* Header & Filters */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-primary-800/60 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-emergency/20 text-emergency p-2 rounded border border-emergency/30">
+          <div className="bg-emergency/10 text-emergency p-2 rounded border border-emergency/20">
             <ShieldAlert size={20} className="animate-pulse" />
           </div>
           <div>
@@ -144,7 +144,7 @@ const IncidentsList = () => {
                       <tr 
                         key={incident._id} 
                         onClick={() => setSelectedIncident(incident)}
-                        className="hover:bg-primary-700/20 transition-colors cursor-pointer"
+                        className="hover:bg-primary-600 transition-colors cursor-pointer"
                       >
                         <td className="p-3">
                           <div className="text-xs font-bold text-text-main">{incident.incidentId || incident._id.substring(0,8)}</div>

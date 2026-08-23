@@ -23,13 +23,13 @@
   --color-text-disabled: #8D979F;
   
   /* Brand & Operations */
-  --color-brand-primary: #315E72;
-  --color-brand-primary-hover: #264B5C;
-  --color-operational: #2F7D5A;  /* Success / Available / Resolved */
-  --color-warning: #B98224;      /* Warning / Delay */
-  --color-emergency: #C94B45;    /* Emergency / Critical */
-  --color-critical: #B83D3D;     /* Redundant Critical */
-  --color-info: #477A9C;         /* Info / En Route / General */
+  --color-brand-primary: #1687D9;
+  --color-brand-primary-hover: #1374BA;
+  --color-operational: #179B62;  /* Success / Available / Resolved */
+  --color-warning: #D99000;      /* Warning / Delay */
+  --color-emergency: #E5484D;    /* Emergency / Critical */
+  --color-critical: #E5484D;     /* Redundant Critical */
+  --color-info: #3B82C4;         /* Info / En Route / General */
 
   /* Legacy semantic mappings */
   --color-primary-900: var(--color-bg-page);
