@@ -4,23 +4,23 @@ import { motion, AnimatePresence } from 'framer-motion';
 const TimelineStep = ({ title, time, active, isLast, icon: Icon, completed }) => (
   <div className="relative flex gap-4 pb-6">
     {!isLast && (
-      <div className={`absolute left-3.5 top-8 bottom-0 w-[2px] ${completed ? 'bg-operational' : 'bg-primary-700/50'}`} />
+      <div className={`absolute left-[13px] top-8 bottom-0 w-[1px] ${completed ? 'bg-operational' : 'bg-border'}`} />
     )}
-    <div className={`relative z-10 w-7 h-7 flex items-center justify-center rounded-full border-2 ${
-      completed ? 'bg-operational text-white border-operational' :
-      active ? 'bg-info/10 text-info border-info animate-pulse' :
-      'bg-primary-800 text-text-muted border-primary-700'
+    <div className={`relative z-10 w-7 h-7 flex items-center justify-center rounded-full border bg-bg-surface ${
+      completed ? 'text-operational border-operational' :
+      active ? 'text-info border-info animate-pulse' :
+      'text-text-disabled border-border'
     }`}>
       <Icon size={12} />
     </div>
     <div className="pt-1">
-      <h4 className={`text-xs font-bold uppercase tracking-wider ${completed ? 'text-operational' : active ? 'text-info' : 'text-text-muted'}`}>{title}</h4>
+      <h4 className={`text-[11px] font-bold uppercase tracking-widest ${completed ? 'text-text-main' : active ? 'text-info' : 'text-text-muted'}`}>{title}</h4>
       {time ? (
-        <span className="text-[10px] text-text-muted font-mono mt-0.5 block">
+        <span className="text-[10px] text-text-muted font-mono mt-1 block tracking-wider">
           {new Date(time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </span>
       ) : (
-        <span className="text-[10px] text-primary-500 font-mono mt-0.5 block">--:--</span>
+        <span className="text-[10px] text-text-disabled font-mono mt-1 block tracking-wider">--:--</span>
       )}
     </div>
   </div>
@@ -44,7 +44,6 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
 
   const statusIdx = getStatusIndex();
   
-  // Try to use timestamps from historical data, fallback to createdAt for reportedAt
   const reportedTime = incident.reportedAt || incident.createdAt || incident.timestamp;
   const verifiedTime = incident.aiAnalysis ? new Date(new Date(reportedTime).getTime() + 5000) : null;
   const dispatchTime = incident.dispatchTime;
@@ -54,77 +53,79 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
   return (
     <AnimatePresence>
       <motion.div 
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-y-0 right-0 w-[400px] bg-primary-800 border-l border-primary-700 shadow-2xl z-[100] flex flex-col"
+        initial={{ x: '100%', opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: '100%', opacity: 0 }}
+        transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+        className="fixed inset-y-0 right-0 w-[420px] max-w-[100vw] bg-bg-surface border-l border-border shadow-[0_0_40px_rgba(0,0,0,0.05)] z-[100] flex flex-col"
       >
         {/* Header */}
-        <div className="h-16 border-b border-primary-700 flex items-center justify-between px-5 bg-primary-800">
+        <div className="h-16 border-b border-border flex items-center justify-between px-6 bg-bg-page/50 backdrop-blur-sm">
           <div className="flex items-center gap-2">
-            <ShieldAlert size={16} className={incident.severity >= 9 ? 'text-emergency' : 'text-warning'} />
-            <span className="text-xs font-bold text-text-main uppercase tracking-widest">Incident Details</span>
+            <div className={`p-1.5 rounded ${incident.severity >= 9 ? 'bg-emergency/10 text-emergency' : 'bg-warning/10 text-warning'}`}>
+              <ShieldAlert size={14} />
+            </div>
+            <span className="text-[11px] font-bold text-text-main uppercase tracking-widest">Incident Record</span>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-primary-600 rounded-full text-text-muted hover:text-text-main transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-bg-surface-secondary rounded-full text-text-muted hover:text-text-main transition-colors">
             <X size={16} />
           </button>
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-8">
           
           {/* Main Info */}
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between items-start mb-2">
-                <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{incident.incidentId || incident._id}</span>
-                <span className={`px-2 py-0.5 rounded text-[9px] font-bold tracking-widest border uppercase ${
-                  incident.status === 'RESOLVED' ? 'bg-operational/10 text-operational border-operational/20' :
-                  'bg-emergency/10 text-emergency border-emergency/20'
-                }`}>
-                  {incident.status.replace('_', ' ')}
-                </span>
-              </div>
-              <h2 className="text-xl font-black text-text-main">{incident.category.replace(/_/g, ' ')}</h2>
-              <div className="flex items-center gap-1.5 text-[11px] text-text-muted mt-2">
-                <MapPin size={12} /> {incident.address || `${incident.city}, ${incident.state || 'India'}`}
-              </div>
+          <div>
+            <div className="flex justify-between items-start mb-3">
+              <span className="text-[10px] font-bold text-text-disabled uppercase tracking-widest font-mono">ID: {incident.incidentId || incident._id}</span>
+              <span className={`px-2 py-0.5 rounded text-[9px] font-bold tracking-widest uppercase border ${
+                incident.status === 'RESOLVED' ? 'bg-operational/10 text-operational border-operational/30' :
+                'bg-emergency/10 text-emergency border-emergency/30'
+              }`}>
+                {incident.status.replace('_', ' ')}
+              </span>
             </div>
+            <h2 className="text-[22px] font-black text-text-main leading-tight mb-2 tracking-tight">{incident.category.replace(/_/g, ' ')}</h2>
+            <div className="flex items-center gap-1.5 text-[12px] text-text-secondary mt-3">
+              <MapPin size={14} className="text-text-muted" /> 
+              {incident.address || `${incident.city}, ${incident.state || 'India'}`}
+            </div>
+          </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-primary-800 border border-primary-700 rounded p-3">
-                <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest block mb-1">Severity</span>
-                <span className={`text-lg font-black ${incident.severity >= 9 ? 'text-emergency' : incident.severity >= 7 ? 'text-warning' : 'text-info'}`}>
-                  {incident.severity}/10
-                </span>
-              </div>
-              <div className="bg-primary-800 border border-primary-700 rounded p-3 shadow-sm">
-                <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest block mb-1">Affected</span>
-                <span className="text-lg font-black text-text-main">{incident.affectedPeople || 'Unknown'}</span>
-              </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-bg-page border border-border rounded p-4">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1">Severity</span>
+              <span className={`text-2xl font-black ${incident.severity >= 9 ? 'text-emergency' : incident.severity >= 7 ? 'text-warning' : 'text-info'}`}>
+                {incident.severity}<span className="text-sm text-text-disabled">/10</span>
+              </span>
+            </div>
+            <div className="bg-bg-page border border-border rounded p-4">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1">Affected</span>
+              <span className="text-2xl font-black text-text-main">{incident.affectedPeople || 'Unk'}</span>
             </div>
           </div>
 
           {/* AI Analysis */}
           {incident.aiAnalysis && (
-            <div className="bg-info/10 border border-info/20 rounded-lg p-4 space-y-2">
-              <h3 className="text-[10px] font-bold text-info uppercase tracking-widest flex items-center gap-1.5 mb-3">
-                <BrainCircuit size={12} /> AI Assessment
-              </h3>
-              <p className="text-xs text-text-secondary leading-relaxed italic border-l-2 border-info/40 pl-3">
+            <div className="bg-info/5 border border-info/20 rounded p-4 space-y-3">
+              <div className="flex justify-between items-center mb-1">
+                <h3 className="text-[10px] font-bold text-info uppercase tracking-widest flex items-center gap-1.5">
+                  <BrainCircuit size={12} /> AI Assessment
+                </h3>
+                <span className="text-[10px] font-bold text-info border border-info/20 px-1.5 py-0.5 rounded uppercase">
+                  {(incident.aiConfidence * 100).toFixed(0)}% Conf
+                </span>
+              </div>
+              <p className="text-[12px] text-text-main leading-relaxed italic font-medium">
                 "{incident.description || 'Medical emergency reported. AI has verified details and suggested dispatch.'}"
               </p>
-              <div className="pt-2 flex justify-between items-center text-[10px] font-bold text-text-muted">
-                <span className="uppercase">Confidence</span>
-                <span className="text-info">{incident.aiConfidence ? `${(incident.aiConfidence*100).toFixed(0)}%` : 'HIGH'}</span>
-              </div>
             </div>
           )}
 
           {/* Timeline */}
           <div>
-            <h3 className="text-xs font-bold text-text-main uppercase tracking-wider mb-4 border-b border-primary-700/50 pb-2">Operational Timeline</h3>
+            <h3 className="text-[11px] font-bold text-text-muted uppercase tracking-widest mb-6 pb-2 border-b border-border">Operational Timeline</h3>
             <div className="px-2">
               <TimelineStep 
                 title="Emergency Reported" 
@@ -164,7 +165,15 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
               />
             </div>
           </div>
-
+          
+          <div className="pt-4 border-t border-border flex gap-3">
+            <button className="flex-1 py-2.5 bg-bg-surface-secondary hover:bg-border transition-colors border border-border rounded text-[11px] font-bold text-text-main uppercase tracking-widest">
+              Assign Manual
+            </button>
+            <button className="flex-1 py-2.5 bg-text-main hover:bg-black transition-colors text-white rounded text-[11px] font-bold uppercase tracking-widest">
+              Resolve
+            </button>
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>

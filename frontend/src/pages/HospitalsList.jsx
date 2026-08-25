@@ -1,5 +1,6 @@
-import { Hospital, BedDouble, MapPin, Filter, Search } from 'lucide-react';
+import { Hospital, BedDouble, MapPin, Filter, Search, Activity, Stethoscope } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import MapComponent from '../components/MapComponent';
 import useDemoStore from '../demo/demoStore';
 
@@ -24,55 +25,49 @@ const HospitalsList = () => {
   const totalBeds = filteredHospitals.reduce((sum, h) => sum + (h.availableBeds || 0), 0);
 
   return (
-    <div className="flex flex-col h-full w-full max-w-[1920px] mx-auto p-4 space-y-4">
-      {/* Header & Filters */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-primary-800/60 backdrop-blur-md p-3 rounded-lg border border-primary-700/50 shadow-xl gap-4">
-        <div className="flex items-center gap-3">
-          <div className="bg-info/10 text-info p-2 rounded border border-info/20">
-            <Hospital size={20} />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-text-main tracking-tight uppercase">Healthcare Network</h1>
-            <p className="text-xs text-text-muted font-bold tracking-wider uppercase">Monitoring {filteredHospitals.length} Facilities</p>
-          </div>
-        </div>
-
-        {/* Network Metrics */}
-        <div className="hidden lg:flex items-center gap-6 px-6 border-l border-primary-700/50">
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">ICU Beds</span>
-            <span className="text-lg font-bold text-operational">{totalICU}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Avail. Beds</span>
-            <span className="text-lg font-bold text-info">{totalBeds}</span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Trauma L1</span>
-            <span className="text-lg font-bold text-emergency">{trauma1}</span>
+    <div className="flex flex-col h-full space-y-6 animate-in fade-in duration-500">
+      
+      {/* Editorial Header & Filters */}
+      <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+        <div>
+          <h1 className="text-2xl font-bold text-text-main tracking-tight mb-2">Healthcare Network</h1>
+          <div className="flex items-center gap-6">
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Facilities</span>
+              <span className="text-[14px] font-semibold text-text-main">{filteredHospitals.length} Units</span>
+            </div>
+            <div className="w-px h-8 bg-border"></div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">ICU Capacity</span>
+              <span className="text-[14px] font-semibold text-operational">{totalICU} Beds</span>
+            </div>
+            <div className="w-px h-8 bg-border"></div>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Trauma Level 1</span>
+              <span className="text-[14px] font-semibold text-emergency">{trauma1} Centers</span>
+            </div>
           </div>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Search */}
-          <div className="flex items-center gap-2 bg-primary-700/60 border border-primary-600/50 rounded px-3 py-1.5">
-            <Search size={12} className="text-text-muted" />
+          <div className="flex items-center gap-2 bg-bg-surface border border-border rounded-md px-3 py-1.5 shadow-sm transition-colors hover:border-border-subtle hover:bg-bg-surface-secondary">
+            <Search size={14} className="text-text-muted" />
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search hospital..."
-              className="bg-transparent text-[10px] font-bold text-text-main outline-none border-none w-28 placeholder:text-text-muted"
+              placeholder="Search facility..."
+              className="bg-transparent text-[11px] font-semibold text-text-main outline-none border-none w-32 placeholder:text-text-muted placeholder:font-medium"
             />
           </div>
-          <div className="flex items-center gap-2 bg-primary-700/60 border border-primary-600/50 rounded px-3 py-1.5">
-            <Filter size={12} className="text-text-muted" />
-            <select value={activeCityFilter} onChange={e => setCityFilter(e.target.value)} className="bg-transparent text-[10px] font-bold text-text-main uppercase tracking-wider outline-none border-none cursor-pointer">
+          <div className="flex items-center gap-2 bg-bg-surface border border-border rounded-md px-3 py-1.5 shadow-sm transition-colors hover:border-border-subtle hover:bg-bg-surface-secondary">
+            <Filter size={14} className="text-text-muted" />
+            <select value={activeCityFilter} onChange={e => setCityFilter(e.target.value)} className="bg-transparent text-[11px] font-semibold text-text-main uppercase tracking-wider outline-none border-none cursor-pointer">
               {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-          <div className="flex items-center gap-2 bg-primary-700/60 border border-primary-600/50 rounded px-3 py-1.5">
-            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="bg-transparent text-[10px] font-bold text-text-main uppercase tracking-wider outline-none border-none cursor-pointer">
+          <div className="flex items-center gap-2 bg-bg-surface border border-border rounded-md px-3 py-1.5 shadow-sm transition-colors hover:border-border-subtle hover:bg-bg-surface-secondary">
+            <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)} className="bg-transparent text-[11px] font-semibold text-text-main uppercase tracking-wider outline-none border-none cursor-pointer">
               <option value="ALL">ALL TYPES</option>
               <option value="GOVERNMENT">GOVERNMENT</option>
               <option value="PRIVATE">PRIVATE</option>
@@ -81,88 +76,119 @@ const HospitalsList = () => {
         </div>
       </div>
 
-      {/* Main Grid */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-4 lg:h-[calc(100vh-160px)] lg:overflow-hidden pb-4 lg:pb-0">
-
+      {/* Main Grid: Split Layout */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
+        
         {/* MAP PANEL */}
-        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg overflow-hidden shadow-2xl relative flex flex-col h-full min-h-[350px] lg:min-h-0">
-          <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 z-10">
-            <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Facility Map</h3>
+        <div className="lg:col-span-5 bg-bg-surface border border-border rounded-lg overflow-hidden shadow-sm relative flex flex-col h-[400px] lg:h-auto">
+          <div className="absolute top-4 left-4 z-[400] bg-white/90 backdrop-blur px-3 py-1.5 rounded shadow border border-border/50 pointer-events-none">
+            <span className="text-[10px] font-bold text-text-main uppercase tracking-widest flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-info" />
+              Network Map
+            </span>
           </div>
-          <div className="flex-1 relative z-0">
-            <MapComponent hospitals={filteredHospitals} />
+          <div className="flex-1 w-full h-full relative z-0">
+            <MapComponent hospitals={filteredHospitals} ambulances={[]} incidents={[]} />
           </div>
         </div>
 
         {/* LIST PANEL */}
-        <div className="bg-primary-800/60 border border-primary-700/50 rounded-lg shadow-xl overflow-hidden flex flex-col h-full">
-          <div className="p-2.5 border-b border-primary-700/50 bg-primary-900/80 flex justify-between items-center">
-            <h3 className="text-xs font-bold text-text-main uppercase tracking-wider">Network Capacity Log</h3>
-            <span className="text-[10px] font-bold text-text-muted bg-primary-700/50 px-2 py-0.5 rounded">{filteredHospitals.length} facilities</span>
+        <div className="lg:col-span-7 bg-bg-surface border border-border rounded-lg shadow-sm overflow-hidden flex flex-col h-full">
+          <div className="p-4 border-b border-border bg-bg-surface flex justify-between items-center shrink-0">
+            <h3 className="text-[12px] font-bold text-text-main uppercase tracking-widest">Capacity Overview</h3>
+            <span className="text-[11px] font-semibold text-text-muted">{filteredHospitals.length} Facilities</span>
           </div>
-          <div className="flex-1 overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse min-w-[600px]">
-              <thead className="sticky top-0 bg-primary-900/95 backdrop-blur-sm z-10 border-b border-primary-700/50">
-                <tr className="text-[10px] font-bold text-text-muted uppercase tracking-wider">
-                  <th className="p-3">Facility / Region</th>
-                  <th className="p-3">Type</th>
-                  <th className="p-3">Trauma</th>
-                  <th className="p-3">ICU / Beds</th>
-                  <th className="p-3">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-primary-700/30">
+          <div className="flex-1 overflow-y-auto w-full bg-bg-page/30 p-4">
+            <div className="space-y-4">
+              <AnimatePresence>
                 {filteredHospitals.length === 0 ? (
-                  <tr><td colSpan="5" className="p-8 text-center text-xs font-bold text-text-muted uppercase">No facilities match current filters.</td></tr>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 text-center text-[12px] font-semibold text-text-muted">
+                    No facilities match current filters.
+                  </motion.div>
                 ) : (
-                  filteredHospitals.map((hospital) => (
-                    <tr key={hospital._id} className="hover:bg-primary-600 transition-colors">
-                      <td className="p-3">
-                        <div className="text-sm font-bold text-text-main truncate max-w-[180px]">{hospital.name}</div>
-                        <div className="text-[10px] text-text-muted flex items-center gap-1 mt-0.5 font-medium">
-                          <MapPin size={9} /> {hospital.city}, {hospital.state}
+                  filteredHospitals.map((hospital) => {
+                    const icuTotal = 50; // Mock total for visual bar
+                    const icuFill = Math.min(100, Math.max(5, (hospital.icuBeds / icuTotal) * 100));
+                    
+                    return (
+                      <motion.div 
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        key={hospital._id} 
+                        className="group bg-bg-surface border border-border rounded-lg p-5 transition-all shadow-sm hover:shadow-md hover:border-border-subtle"
+                      >
+                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                          
+                          {/* Info Column */}
+                          <div className="flex-1 flex flex-col gap-2">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${
+                                hospital.hospitalType === 'GOVERNMENT'
+                                  ? 'bg-bg-page text-text-main border-border'
+                                  : 'bg-info/10 text-info border-info/20'
+                              }`}>
+                                {hospital.hospitalType}
+                              </span>
+                              <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${
+                                hospital.traumaLevel === 1
+                                  ? 'bg-emergency/10 text-emergency border-emergency/20'
+                                  : hospital.traumaLevel === 2
+                                  ? 'bg-warning/10 text-warning border-warning/20'
+                                  : 'bg-bg-page text-text-muted border-border'
+                              }`}>
+                                Level {hospital.traumaLevel} Trauma
+                              </span>
+                            </div>
+                            
+                            <h4 className="text-[16px] font-bold text-text-main truncate max-w-[300px]">
+                              {hospital.name}
+                            </h4>
+                            
+                            <div className="flex items-center gap-1.5 text-[12px] text-text-secondary mt-1">
+                              <MapPin size={12} className="text-text-muted" /> 
+                              {hospital.city}, {hospital.state}
+                            </div>
+                          </div>
+
+                          {/* Capacity Column */}
+                          <div className="flex flex-col gap-4 md:w-48 shrink-0 md:border-l border-border md:pl-5">
+                            
+                            <div className="flex flex-col gap-1.5">
+                              <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                                <span className="flex items-center gap-1.5"><Activity size={10} className="text-operational"/> ICU</span>
+                                <span className="text-text-main">{hospital.icuBeds} Avail</span>
+                              </div>
+                              <div className="w-full bg-border rounded-full h-1.5 overflow-hidden">
+                                <div className="bg-operational h-full rounded-full" style={{ width: `${icuFill}%` }} />
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-col gap-1.5">
+                              <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-text-muted">
+                                <span className="flex items-center gap-1.5"><BedDouble size={10} className="text-info"/> Ward</span>
+                                <span className="text-text-main">{hospital.availableBeds} Avail</span>
+                              </div>
+                            </div>
+
+                            <span className={`mt-2 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1.5 rounded border text-center ${
+                              hospital.status === 'AVAILABLE'
+                                ? 'bg-operational/10 text-operational border-operational/20'
+                                : 'bg-emergency/10 text-emergency border-emergency/20'
+                            }`}>
+                              {hospital.status}
+                            </span>
+                            
+                          </div>
+
                         </div>
-                      </td>
-                      <td className="p-3">
-                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${
-                          hospital.hospitalType === 'GOVERNMENT'
-                            ? 'bg-primary-700/50 text-text-main border-primary-600/50'
-                            : 'bg-info/10 text-info border-info/20'
-                        }`}>
-                          {hospital.hospitalType}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${
-                          hospital.traumaLevel === 1
-                            ? 'bg-emergency/10 text-emergency border-emergency/20'
-                            : hospital.traumaLevel === 2
-                            ? 'bg-warning/10 text-warning border-warning/20'
-                            : 'bg-primary-700/50 text-text-muted border-primary-600/50'
-                        }`}>
-                          L{hospital.traumaLevel}
-                        </span>
-                      </td>
-                      <td className="p-3">
-                        <div className="text-sm font-bold text-operational flex items-center gap-1">
-                          <BedDouble size={12} /> {hospital.icuBeds}
-                        </div>
-                        <div className="text-[10px] text-text-muted mt-0.5">{hospital.availableBeds} avail.</div>
-                      </td>
-                      <td className="p-3">
-                        <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border ${
-                          hospital.status === 'AVAILABLE'
-                            ? 'bg-operational/10 text-operational border-operational/20'
-                            : 'bg-emergency/10 text-emergency border-emergency/20'
-                        }`}>
-                          {hospital.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
+                      </motion.div>
+                    );
+                  })
                 )}
-              </tbody>
-            </table>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
