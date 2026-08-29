@@ -1,5 +1,8 @@
-import { X, Clock, MapPin, AlertTriangle, BrainCircuit, Activity, Truck, CheckCircle, ShieldAlert } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Clock, MapPin, AlertTriangle, BrainCircuit, Activity, Truck, CheckCircle, ShieldAlert, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { apiService, BASE_URL } from '../services/apiService';
+import useAuthStore from '../stores/authStore';
 
 const TimelineStep = ({ title, time, active, isLast, icon: Icon, completed }) => (
   <div className="relative flex gap-4 pb-6">
@@ -27,6 +30,59 @@ const TimelineStep = ({ title, time, active, isLast, icon: Icon, completed }) =>
 );
 
 const IncidentDetailsPanel = ({ incident, onClose }) => {
+  const token = useAuthStore(state => state.token);
+  const [assignMode, setAssignMode] = useState(false);
+  const [ambulances, setAmbulances] = useState([]);
+  const [selectedAmbulance, setSelectedAmbulance] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [resolving, setResolving] = useState(false);
+
+  useEffect(() => {
+    if (assignMode && ambulances.length === 0) {
+      apiService.getAmbulances(token).then(data => setAmbulances(data || []));
+    }
+  }, [assignMode, token, ambulances.length]);
+
+  const handleAssign = async () => {
+    if (!selectedAmbulance) return;
+    setLoading(true);
+    try {
+      const incidentId = incident._id || incident.id;
+      if (!incidentId) throw new Error("Incident ID missing");
+      await apiService.assignAmbulance(incidentId, selectedAmbulance, token);
+      alert("Ambulance assigned successfully.");
+      setAssignMode(false);
+      // Wait a moment before UI re-syncs
+    } catch (err) {
+      if (err.message && err.message.toLowerCase().includes('authorized')) {
+        alert("Session authentication failed. Please sign in again.");
+      } else {
+        alert("Unable to assign ambulance. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResolve = async () => {
+    setResolving(true);
+    try {
+      const incidentId = incident._id || incident.id;
+      if (!incidentId) throw new Error("Incident ID missing");
+      await apiService.updateIncidentStatus(incidentId, 'RESOLVED', token);
+      alert("Incident resolved successfully.");
+      onClose(); // Close on success
+    } catch (err) {
+      if (err.message && err.message.toLowerCase().includes('authorized')) {
+        alert("Session authentication failed. Please sign in again.");
+      } else {
+        alert("Unable to resolve incident. Please try again.");
+      }
+    } finally {
+      setResolving(false);
+    }
+  };
+
   if (!incident) return null;
 
   const getStatusIndex = () => {
@@ -123,6 +179,33 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
             </div>
           )}
 
+          {/* Evidence */}
+          {incident.media && incident.media.length > 0 && (
+            <div className="bg-bg-page border border-border rounded p-4 space-y-3">
+              <h3 className="text-[10px] font-bold text-text-muted uppercase tracking-widest flex items-center gap-1.5">
+                <ImageIcon size={12} /> Reported Evidence
+              </h3>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {incident.media.map((img, idx) => (
+                  <a 
+                    key={idx} 
+                    href={`${BASE_URL}${img}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block shrink-0 w-24 h-24 rounded border border-border overflow-hidden hover:opacity-80 transition-opacity"
+                  >
+                    <img 
+                      src={`${BASE_URL}${img}`} 
+                      alt={`Evidence ${idx + 1}`} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Timeline */}
           <div>
             <h3 className="text-[11px] font-bold text-text-muted uppercase tracking-widest mb-6 pb-2 border-b border-border">Operational Timeline</h3>
@@ -166,13 +249,54 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
             </div>
           </div>
           
-          <div className="pt-4 border-t border-border flex gap-3">
-            <button className="flex-1 py-2.5 bg-bg-surface-secondary hover:bg-border transition-colors border border-border rounded text-[11px] font-bold text-text-main uppercase tracking-widest">
-              Assign Manual
-            </button>
-            <button className="flex-1 py-2.5 bg-text-main hover:bg-black transition-colors text-white rounded text-[11px] font-bold uppercase tracking-widest">
-              Resolve
-            </button>
+          <div className="pt-4 border-t border-border flex flex-col gap-3">
+            {assignMode ? (
+              <div className="flex flex-col gap-2 p-3 bg-bg-surface-secondary border border-border rounded">
+                <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Select Available Unit</span>
+                <select 
+                  className="bg-bg-page border border-border text-text-main text-xs p-2 rounded outline-none focus:border-info"
+                  value={selectedAmbulance}
+                  onChange={(e) => setSelectedAmbulance(e.target.value)}
+                >
+                  <option value="">-- Choose Unit --</option>
+                  {ambulances.filter(a => a.status === 'AVAILABLE').map(a => (
+                    <option key={a._id || a.id} value={a._id || a.id}>{a.ambulanceId} — {a.status} — {a.capability || a.type}</option>
+                  ))}
+                </select>
+                <div className="flex gap-2 mt-2">
+                  <button 
+                    onClick={() => setAssignMode(false)}
+                    className="flex-1 py-1.5 bg-bg-page hover:bg-border transition-colors border border-border rounded text-[10px] font-bold text-text-main uppercase"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleAssign}
+                    disabled={!selectedAmbulance || loading}
+                    className="flex-1 py-1.5 bg-info hover:bg-info/80 transition-colors text-black rounded text-[10px] font-bold uppercase disabled:opacity-50"
+                  >
+                    {loading ? 'Assigning...' : 'Confirm'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setAssignMode(true)}
+                  disabled={statusIdx >= 2} // Disabled if already assigned or further
+                  className="flex-1 py-2.5 bg-bg-surface-secondary hover:bg-border transition-colors border border-border rounded text-[11px] font-bold text-text-main uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  {statusIdx >= 2 ? 'Dispatched' : 'Assign Manual'}
+                </button>
+                <button 
+                  onClick={handleResolve}
+                  disabled={statusIdx >= 4 || resolving}
+                  className="flex-1 py-2.5 bg-text-main hover:bg-black transition-colors text-white rounded text-[11px] font-bold uppercase tracking-widest disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  {resolving ? 'Resolving...' : (statusIdx >= 4 ? 'Resolved' : 'Resolve')}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
 
 @theme {
   /* Brand Typography */
@@ -82,6 +82,11 @@
 .leaflet-container {
   background: #E5E7EB !important; /* light gray map background */
   font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* Dark mode map tiles fallback */
+.map-tiles {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
 /* Select option fix for light mode */

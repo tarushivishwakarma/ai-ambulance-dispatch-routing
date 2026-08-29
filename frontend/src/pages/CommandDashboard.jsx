@@ -30,7 +30,10 @@ const KpiBlock = ({ label, value, color, sub, trend }) => (
   </motion.div>
 );
 
+import { useNavigate } from 'react-router-dom';
+
 const CommandDashboard = () => {
+  const navigate = useNavigate();
   const incidents = useDemoStore(state => state.incidents);
   const ambulances = useDemoStore(state => state.ambulances);
   const hospitals = useDemoStore(state => state.hospitals);
@@ -38,7 +41,16 @@ const CommandDashboard = () => {
   const dispatches = useDemoStore(state => state.dispatches);
   const activeCityFilter = useDemoStore(state => state.activeCityFilter);
   const setCityFilter = useDemoStore(state => state.setCityFilter);
+  const globalSelectedId = useDemoStore(state => state.selectedIncidentId);
   const [selectedIncident, setSelectedIncident] = useState(null);
+
+  useEffect(() => {
+    if (globalSelectedId) {
+      const inc = incidents.find(i => i._id === globalSelectedId || i.incidentId === globalSelectedId);
+      if (inc) setSelectedIncident(inc);
+      useDemoStore.getState().setSelectedIncidentId(null);
+    }
+  }, [globalSelectedId, incidents]);
 
   const filteredInc = activeCityFilter === 'All India' ? incidents : incidents.filter(i => i.city === activeCityFilter);
   const filteredAmb = activeCityFilter === 'All India' ? ambulances : ambulances.filter(a => a.city === activeCityFilter);
@@ -74,7 +86,10 @@ const CommandDashboard = () => {
                 {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-text-main text-white rounded-md text-[12px] font-bold transition-all hover:bg-black shadow-sm active:scale-95">
+            <button 
+              onClick={() => navigate('/report')}
+              className="flex items-center gap-2 px-4 py-2 bg-text-main text-white rounded-md text-[12px] font-bold transition-all hover:bg-black shadow-sm active:scale-95"
+            >
               Declare Emergency
             </button>
           </div>

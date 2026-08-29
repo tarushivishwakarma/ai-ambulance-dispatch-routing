@@ -37,40 +37,47 @@ const hospitalIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
-// Helper component to auto-center map
-const MapUpdater = ({ center, zoom }) => {
+// Helper component to auto-center map only when filter changes
+const MapUpdater = ({ activeCityFilter, incidents, ambulances, hospitals }) => {
   const map = useMap();
+  const [centeredOn, setCenteredOn] = useState(null);
+
   useEffect(() => {
-    map.setView(center, zoom);
-  }, [center, zoom, map]);
+    if (activeCityFilter === centeredOn) return;
+
+    let targetCenter = [22.0, 79.0];
+    let targetZoom = 5;
+    let found = true;
+
+    if (activeCityFilter !== 'All India' && activeCityFilter !== '') {
+      found = false;
+      const itemWithCity = 
+        hospitals.find(h => h.city === activeCityFilter) ||
+        incidents.find(i => i.city === activeCityFilter) || 
+        ambulances.find(a => a.city === activeCityFilter);
+        
+      if (itemWithCity) {
+        const coords = itemWithCity.location?.coordinates || itemWithCity.currentLocation?.coordinates;
+        if (coords) {
+          targetCenter = [coords[1], coords[0]];
+          targetZoom = 11;
+          found = true;
+        }
+      }
+    }
+
+    if (found) {
+      map.setView(targetCenter, targetZoom);
+      setCenteredOn(activeCityFilter);
+    }
+  }, [activeCityFilter, centeredOn, incidents, ambulances, hospitals, map]);
+
   return null;
 };
 
 const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
-  // Use demo store active filter to center map
   const activeCityFilter = useDemoStore(state => state.activeCityFilter);
   
-  const getCenterAndZoom = () => {
-    if (activeCityFilter === 'All India' || activeCityFilter === '') {
-      return { center: [22.0, 79.0], zoom: 5 }; // Center of India
-    }
-    
-    // Find city coordinates from incidents, hospitals or ambulances
-    const itemWithCity = 
-      hospitals.find(h => h.city === activeCityFilter) ||
-      incidents.find(i => i.city === activeCityFilter) || 
-      ambulances.find(a => a.city === activeCityFilter);
-      
-    if (itemWithCity && itemWithCity.location) {
-      return { center: [itemWithCity.location.coordinates[1], itemWithCity.location.coordinates[0]], zoom: 11 };
-    }
-    if (itemWithCity && itemWithCity.currentLocation) {
-      return { center: [itemWithCity.currentLocation.coordinates[1], itemWithCity.currentLocation.coordinates[0]], zoom: 11 };
-    }
-    return { center: [22.0, 79.0], zoom: 5 };
-  };
-
-  const { center, zoom } = getCenterAndZoom();
   const routes = useDemoStore(state => state.routes) || [];
   const alerts = useDemoStore(state => state.alerts) || [];
   const roadConditions = useDemoStore(state => state.roadConditions) || [];
@@ -78,16 +85,18 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
   return (
     <div className="h-full w-full relative z-0">
       <MapContainer 
-        center={center} 
-        zoom={zoom} 
+        center={[22.0, 79.0]} 
+        zoom={5} 
         style={{ height: '100%', width: '100%', background: '#0a1128' }}
         zoomControl={false}
       >
-        <MapUpdater center={center} zoom={zoom} />
+        <MapUpdater activeCityFilter={activeCityFilter} incidents={incidents} ambulances={ambulances} hospitals={hospitals} />
         
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; OpenStreetMap contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          className="map-tiles"
+          maxZoom={19}
         />
         
         {/* Routes */}

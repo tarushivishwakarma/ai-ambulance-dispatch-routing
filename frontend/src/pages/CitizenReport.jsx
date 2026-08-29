@@ -5,25 +5,134 @@ import { useNavigate } from 'react-router-dom';
 
 const CitizenReport = () => {
   const [description, setDescription] = useState('');
-  const [address, setAddress] = useState('Hazratganj, Lucknow (GPS Auto-detected)');
+  const [address, setAddress] = useState('');
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
   const [media, setMedia] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [locating, setLocating] = useState(false);
   const navigate = useNavigate();
+
+  const handleGetCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser. Please enter your location manually.");
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude: lat, longitude: lng } = position.coords;
+        setLatitude(lat);
+        setLongitude(lng);
+        try {
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data && data.display_name) {
+              setAddress(data.display_name);
+            } else {
+              setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+            }
+          } else {
+            setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+          }
+        } catch (error) {
+          console.error("Reverse geocoding failed:", error);
+          setAddress(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+        } finally {
+          setLocating(false);
+        }
+      },
+      (error) => {
+        setLocating(false);
+        console.error("Geolocation error:", error);
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert("Location permission denied. Please enter your location manually.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable. Please enter manually.");
+            break;
+          case error.TIMEOUT:
+            alert("The request to get user location timed out. Please enter manually.");
+            break;
+          default:
+            alert("An unknown error occurred while getting location.");
+            break;
+        }
+      },
+      { timeout: 10000 }
+    );
+  };
+
+  const forwardGeocode = async (addressQuery) => {
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressQuery)}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) {
+          return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+        }
+      }
+    } catch (err) {
+      console.error("Forward geocoding failed", err);
+    }
+    return null;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-      await apiService.createIncident({
-        category: 'ROAD_ACCIDENT',
-        description: description + (media ? ' [Includes Photo Evidence]' : ''),
-        address,
-        location: { type: 'Point', coordinates: [80.9439, 26.8488] },
-        severity: 8,
-        isMedicalEmergency: true,
-        affectedPeople: 1
-      });
+      let finalLat = latitude;
+      let finalLng = longitude;
+      
+      // If no GPS coordinates, try to geocode the manual address
+      if (finalLat === null || finalLng === null) {
+        if (!address.trim()) {
+          throw new Error("Please provide an address or use your current location.");
+        }
+        const geo = await forwardGeocode(address);
+        if (geo) {
+          finalLat = geo.lat;
+          finalLng = geo.lng;
+          setLatitude(finalLat);
+          setLongitude(finalLng);
+        } else {
+          throw new Error("Could not find coordinates for this address. Please try 'Use My Current Location' or provide a more specific city/street.");
+        }
+      }
+      
+      if (!isFinite(finalLat) || !isFinite(finalLng) || finalLat < -90 || finalLat > 90 || finalLng < -180 || finalLng > 180) {
+        throw new Error("Invalid coordinates generated. Please try again.");
+      }
+      let payload;
+      if (mediaFile) {
+        payload = new FormData();
+        payload.append('category', 'ROAD_ACCIDENT');
+        payload.append('description', description + ' [Includes Photo Evidence]');
+        payload.append('address', address);
+        payload.append('latitude', finalLat);
+        payload.append('longitude', finalLng);
+        payload.append('severity', 8);
+        payload.append('isMedicalEmergency', true);
+        payload.append('affectedPeople', 1);
+        payload.append('media', mediaFile);
+      } else {
+        payload = {
+          category: 'ROAD_ACCIDENT',
+          description: description,
+          address,
+          latitude: finalLat,
+          longitude: finalLng,
+          severity: 8,
+          isMedicalEmergency: true,
+          affectedPeople: 1
+        };
+      }
+      
+      await apiService.createIncident(payload);
       alert('Emergency reported successfully! Dispatch is reviewing.');
       navigate('/');
     } catch (error) {
@@ -33,13 +142,23 @@ const CitizenReport = () => {
     }
   };
 
+  const [mediaFile, setMediaFile] = useState(null);
+
   const handleMediaChange = (e) => {
     const file = e.target.files[0];
     if(file) {
+      setMediaFile(file);
       const reader = new FileReader();
       reader.onload = (event) => setMedia(event.target.result);
       reader.readAsDataURL(file);
     }
+  };
+
+  // Reset coordinates if user manually changes the address
+  const handleAddressChange = (e) => {
+    setAddress(e.target.value);
+    setLatitude(null);
+    setLongitude(null);
   };
 
   return (
@@ -67,14 +186,26 @@ const CitizenReport = () => {
           </label>
 
           <label className="block">
-            <span className="text-sm font-bold uppercase tracking-wider text-text-muted mb-2 block">Location</span>
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-bold uppercase tracking-wider text-text-muted">Location</span>
+              <button 
+                type="button" 
+                onClick={handleGetCurrentLocation}
+                disabled={locating}
+                className="text-info text-xs font-bold uppercase hover:underline flex items-center gap-1 disabled:opacity-50"
+              >
+                {locating ? "Locating..." : "Use My Current Location"}
+              </button>
+            </div>
             <div className="flex relative">
               <MapPin className="absolute left-3 top-3 text-info" size={20} />
               <input 
                 type="text" 
+                required
                 className="w-full bg-primary-800 border border-primary-700 rounded-md py-3 pl-10 pr-4 text-text-main focus:border-info focus:ring-1 focus:ring-info outline-none shadow-sm"
+                placeholder="Enter address manually or use GPS"
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={handleAddressChange}
               />
             </div>
           </label>

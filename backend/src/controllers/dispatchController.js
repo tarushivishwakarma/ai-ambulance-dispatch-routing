@@ -92,7 +92,8 @@ const assignDispatch = async (req, res, next) => {
     await Incident.findByIdAndUpdate(incidentId, { 
       assignedAmbulance: ambulanceId,
       assignedDispatcher: req.user._id,
-      status: 'ASSIGNED'
+      status: 'ASSIGNED',
+      dispatchTime: Date.now()
     });
 
     // Update Ambulance

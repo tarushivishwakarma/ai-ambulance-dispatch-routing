@@ -68,25 +68,24 @@ const LoginPage = () => {
       </div>
 
       {/* RIGHT: Login Form */}
-      <div className="w-full lg:w-5/12 flex flex-col justify-center px-10 md:px-16 bg-primary-900 relative">
+      <div className="w-full lg:w-5/12 flex flex-col px-6 md:px-12 bg-primary-900 py-6">
 
         {/* Back to Landing */}
-        <Link
-          to="/"
-          className="absolute top-6 left-6 flex items-center gap-2 text-text-muted hover:text-text-main text-[11px] font-bold uppercase tracking-widest transition-colors group"
-        >
-          <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-          Back to Landing
-        </Link>
+        <div className="w-full flex justify-start mb-8 lg:mb-12">
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-text-muted hover:text-text-main text-[11px] font-bold uppercase tracking-widest transition-colors group"
+          >
+            <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
+            Back to Landing
+          </Link>
+        </div>
 
-        <div className="max-w-sm w-full mx-auto space-y-8">
+        <div className="flex-1 flex flex-col justify-center">
+          <div className="max-w-sm w-full mx-auto space-y-8 pb-10 lg:pb-0">
 
           {/* Header */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2 mb-4">
-              <Shield size={20} className="text-emergency" />
-              <span className="text-[11px] font-bold uppercase tracking-widest text-emergency">Authority Access</span>
-            </div>
             <h1 className="text-3xl font-black text-text-main tracking-tight">Authorized<br />Dashboard Access</h1>
             <p className="text-sm text-text-muted leading-relaxed">
               Enter the AI Dispatch Emergency Operations Center demo environment.
@@ -166,6 +165,7 @@ const LoginPage = () => {
             </span>
             <span>Version 2.4.0</span>
           </div>
+        </div>
         </div>
       </div>
     </div>

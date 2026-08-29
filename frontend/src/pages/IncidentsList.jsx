@@ -38,9 +38,18 @@ const IncidentsList = () => {
   const allIncidents = useDemoStore(state => state.incidents);
   const activeCityFilter = useDemoStore(state => state.activeCityFilter);
   const setCityFilter = useDemoStore(state => state.setCityFilter);
+  const globalSelectedId = useDemoStore(state => state.selectedIncidentId);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [severityFilter, setSeverityFilter] = useState('ALL');
   const [selectedIncident, setSelectedIncident] = useState(null);
+
+  useEffect(() => {
+    if (globalSelectedId) {
+      const inc = allIncidents.find(i => i._id === globalSelectedId || i.incidentId === globalSelectedId);
+      if (inc) setSelectedIncident(inc);
+      useDemoStore.getState().setSelectedIncidentId(null);
+    }
+  }, [globalSelectedId, allIncidents]);
 
   const filteredIncidents = allIncidents.filter(i => {
     if (activeCityFilter !== 'All India' && i.city !== activeCityFilter) return false;

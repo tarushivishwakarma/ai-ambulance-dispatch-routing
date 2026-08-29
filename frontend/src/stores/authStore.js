@@ -13,29 +13,29 @@ const useAuthStore = create((set, get) => ({
 
   login: async (email, password) => {
     set({ isLoading: true, error: null });
-    
-    // Always bypass for the demo login email, or if forced by env vars
-    const isSystemDemoMode = email === 'dispatcher@operations.local' || import.meta.env.VITE_FORCE_DEMO === 'true' || !import.meta.env.VITE_API_URL;
-    
-    if (isSystemDemoMode) {
-      await new Promise(resolve => setTimeout(resolve, 800));
-      const mockUser = {
-        id: 'OP-1004',
-        name: 'Demo Operator',
-        email: email || 'dispatcher@operations.local',
-        role: email.toLowerCase().includes('driver') ? 'DRIVER' : 'DISPATCHER',
-        token: 'demo-jwt-token-xyz'
-      };
-      localStorage.setItem('token', mockUser.token);
-      set({ user: mockUser, token: mockUser.token, isLoading: false });
-      return;
-    }
 
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-      const { data } = response.data;
-      localStorage.setItem('token', data.token);
-      set({ user: data, token: data.token, isLoading: false });
+      let response;
+      try {
+        response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      } catch (loginError) {
+        // If login fails for the demo user (doesn't exist yet), auto-register them
+        if (email === 'dispatcher@operations.local' || email === 'admin@operations.local') {
+          response = await axios.post(`${API_URL}/auth/register`, {
+            name: email.includes('admin') ? 'System Admin' : 'Demo Operator',
+            email,
+            password,
+            role: email.includes('admin') ? 'ADMIN' : 'DISPATCHER'
+          });
+        } else {
+          throw loginError;
+        }
+      }
+
+      // Ensure we support both { data: { token } } and { data: { data: { token } } } based on backend
+      const userData = response.data.data || response.data;
+      localStorage.setItem('token', userData.token);
+      set({ user: userData, token: userData.token, isLoading: false });
     } catch (error) {
       set({ 
         error: error.response?.data?.message || 'Login failed', 

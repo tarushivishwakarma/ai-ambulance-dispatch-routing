@@ -13,6 +13,7 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
   const notifications = useDemoStore(state => state.notifications);
   const unread = notifications.filter(n => !n.read).length;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const handleExit = () => {
     logout();
@@ -168,7 +169,7 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
         <div className="absolute inset-0 z-0 opacity-[0.015] pointer-events-none mix-blend-multiply" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, var(--color-border) 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
 
         {/* Top Header */}
-        <header className="relative z-10 h-16 min-h-[64px] bg-bg-surface border-b border-border flex items-center px-6 justify-between shrink-0">
+        <header className="relative z-[9999] h-16 min-h-[64px] bg-bg-surface border-b border-border flex items-center px-6 justify-between shrink-0">
           <div className="flex items-center gap-4">
             <button 
               className="md:hidden p-1.5 -ml-2 text-text-secondary hover:text-text-main transition-colors"
@@ -197,14 +198,65 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
 
           <div className="flex items-center gap-4 md:gap-5 shrink-0">
             {/* Notifications */}
-            <button className="relative p-2 text-text-secondary hover:text-text-main transition-colors rounded-full hover:bg-bg-surface-secondary">
-              <Bell size={18} />
-              {unread > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-emergency rounded-full text-[9px] font-black text-white flex items-center justify-center ring-2 ring-bg-surface">
-                  {unread > 9 ? '9+' : unread}
-                </span>
-              )}
-            </button>
+            <div className="relative">
+              <button 
+                className="relative p-2 text-text-secondary hover:text-text-main transition-colors rounded-full hover:bg-bg-surface-secondary"
+                onClick={() => setShowNotifications(!showNotifications)}
+              >
+                <Bell size={18} />
+                {unread > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-emergency rounded-full text-[9px] font-black text-white flex items-center justify-center ring-2 ring-bg-surface">
+                    {unread > 9 ? '9+' : unread}
+                  </span>
+                )}
+              </button>
+              
+              <AnimatePresence>
+                {showNotifications && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-2 w-80 bg-bg-surface/80 backdrop-blur-md border border-border rounded-lg shadow-xl overflow-hidden z-[9999] flex flex-col"
+                  >
+                    <div className="p-3 border-b border-border bg-bg-page flex justify-between items-center">
+                      <span className="text-xs font-bold uppercase tracking-widest text-text-main">System Alerts</span>
+                      <span className="text-[10px] text-text-muted">{notifications.length} Total</span>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-6 text-center text-text-muted text-xs">No active alerts</div>
+                      ) : (
+                        notifications.map(notif => (
+                          <div 
+                            key={notif.id} 
+                            onClick={() => {
+                              useDemoStore.getState().markNotificationRead(notif.id);
+                              if (notif.incidentId) {
+                                useDemoStore.getState().setSelectedIncidentId(notif.incidentId);
+                              }
+                              setShowNotifications(false);
+                            }}
+                            className={`p-3 border-b border-border last:border-0 cursor-pointer hover:bg-bg-surface-secondary transition-colors ${!notif.read ? 'bg-info/5' : ''}`}
+                          >
+                            <div className="flex justify-between items-start mb-1">
+                              <span className={`text-[10px] font-bold uppercase tracking-wider ${!notif.read ? 'text-info' : 'text-text-muted'}`}>{notif.title}</span>
+                              <span className="text-[9px] text-text-disabled">
+                                {notif.timestamp && !isNaN(new Date(notif.timestamp).getTime())
+                                  ? new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                  : 'Just now'}
+                              </span>
+                            </div>
+                            <p className={`text-xs ${!notif.read ? 'text-text-main font-medium' : 'text-text-secondary'}`}>{notif.message}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             
             <div className="h-6 w-px bg-border hidden sm:block"></div>
 
@@ -221,8 +273,8 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
           </div>
         </header>
 
-        <div className="relative z-10 flex-1 overflow-auto w-full p-4 md:p-6 lg:p-8">
-          <div className="h-full w-full max-w-[1920px] mx-auto">
+        <div className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden w-full p-4 md:p-6 lg:p-8">
+          <div className="min-h-full w-full max-w-[1920px] mx-auto">
             {children || <Outlet />}
           </div>
         </div>

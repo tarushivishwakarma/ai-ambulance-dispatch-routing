@@ -25,9 +25,11 @@ const useDemoStore = create((set, get) => ({
   notifications: [],
   simulationInterval: null,
   activeCityFilter: 'All India',
+  selectedIncidentId: null,
 
   // --- ACTIONS ---
   setCityFilter: (city) => set({ activeCityFilter: city }),
+  setSelectedIncidentId: (id) => set({ selectedIncidentId: id }),
 
   reset: () => {
     // Stop simulation if running

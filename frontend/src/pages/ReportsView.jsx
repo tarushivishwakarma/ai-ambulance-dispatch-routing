@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { apiService } from '../services/apiService';
-import { FileText, Download, Filter, Clock, CheckCircle, Activity, MapPin, ChevronDown } from 'lucide-react';
+import { apiService, BASE_URL } from '../services/apiService';
+import useAuthStore from '../stores/authStore';
+import { FileText, Download, Filter, Clock, CheckCircle, Activity, MapPin, ChevronDown, Image as ImageIcon } from 'lucide-react';
 
 const ReportsView = () => {
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const token = useAuthStore(state => state.token);
   const [filters, setFilters] = useState({
     year: 'ALL',
     city: 'ALL',
@@ -23,14 +25,14 @@ const ReportsView = () => {
     if (filters.ambulanceType && filters.ambulanceType !== 'ALL') queryFilters.ambulanceType = filters.ambulanceType;
     if (filters.outcome && filters.outcome !== 'ALL') queryFilters.outcome = filters.outcome;
 
-    apiService.getHistoricalIncidents(queryFilters).then(data => {
+    apiService.getHistoricalIncidents(queryFilters, token).then(data => {
       setIncidents(data || []);
       setLoading(false);
     }).catch(err => {
       console.error(err);
       setLoading(false);
     });
-  }, [filters]);
+  }, [filters, token]);
 
   const years = ['2020', '2021', '2022', '2023', '2024', '2025', '2026'];
   const cities = ['All India', 'New Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Lucknow', 'Jaipur', 'Ahmedabad', 'Pune', 'Surat', 'Indore', 'Bhopal', 'Patna', 'Chandigarh', 'Dehradun', 'Guwahati', 'Bhubaneswar', 'Nagpur', 'Nashik', 'Agra', 'Varanasi', 'Amritsar', 'Ludhiana', 'Coimbatore', 'Visakhapatnam', 'Kochi', 'Thiruvananthapuram', 'Ranchi'].sort();
@@ -54,54 +56,71 @@ const ReportsView = () => {
   const avgHospitalArrivalTime = hospitalArrivalTimes.length ? (hospitalArrivalTimes.reduce((a, b) => a + b, 0) / hospitalArrivalTimes.length).toFixed(1) : '--';
 
   const handleExportCSV = () => {
+    if (filteredIncidents.length === 0) {
+      alert("No data available to export. Please adjust your filters or wait for incidents to load.");
+      return;
+    }
+
+    const safeIso = (dateStr) => {
+      if (!dateStr) return '--';
+      const d = new Date(dateStr);
+      return isNaN(d.getTime()) ? '--' : d.toISOString();
+    };
+
     const headers = [
       'Incident ID', 'Date', 'Year', 'Month', 'City', 'State', 
       'Category', 'Severity', 'Affected People', 'Ambulance ID', 
       'Ambulance Type', 'Hospital', 'Reported At', 'AI Verified At', 'Dispatch Time', 'Arrived On Scene', 
-      'Hospital Arrival Time', 'Resolved At', 'Response Time', 'Hospital Arrival Duration', 'Resolution Time', 'Outcome', 'Status', 'Data Source'
+      'Hospital Arrival Time', 'Resolved At', 'Response Time', 'Hospital Arrival Duration', 'Resolution Time', 'Outcome', 'Status', 'Data Source', 'Evidence Link'
     ];
     
     const rows = filteredIncidents.map(i => {
       const rTime = getMinutes(i.reportedAt, i.arrivedOnSceneTime);
       const resTime = getMinutes(i.reportedAt, i.resolvedAt);
       const hTime = getMinutes(i.arrivedOnSceneTime, i.hospitalArrivalTime);
-      const d = new Date(i.reportedAt);
+      const d = i.reportedAt ? new Date(i.reportedAt) : new Date();
+      const validD = !isNaN(d.getTime());
       
       return [
-        i.incidentId || i._id,
-        d.toISOString().split('T')[0],
-        d.getFullYear(),
-        d.getMonth() + 1,
+        i.incidentId || i._id || '--',
+        validD ? d.toISOString().split('T')[0] : '--',
+        validD ? d.getFullYear() : '--',
+        validD ? (d.getMonth() + 1) : '--',
         i.city || '--',
         i.state || '--',
-        i.category,
-        i.severityScore ? i.severityScore.toFixed(1) : i.severity,
+        i.category || '--',
+        i.severityScore ? i.severityScore.toFixed(1) : (i.severity || '--'),
         i.affectedPeople || 1,
         i.ambulanceId || '--',
         i.ambulanceType || '--',
         i.hospitalName || '--',
-        i.reportedAt ? new Date(i.reportedAt).toISOString() : '--',
-        i.aiVerifiedAt ? new Date(i.aiVerifiedAt).toISOString() : '--',
-        i.dispatchTime ? new Date(i.dispatchTime).toISOString() : '--',
-        i.arrivedOnSceneTime ? new Date(i.arrivedOnSceneTime).toISOString() : '--',
-        i.hospitalArrivalTime ? new Date(i.hospitalArrivalTime).toISOString() : '--',
-        i.resolvedAt ? new Date(i.resolvedAt).toISOString() : '--',
+        safeIso(i.reportedAt),
+        safeIso(i.aiVerifiedAt),
+        safeIso(i.dispatchTime),
+        safeIso(i.arrivedOnSceneTime),
+        safeIso(i.hospitalArrivalTime),
+        safeIso(i.resolvedAt),
         rTime ? rTime.toFixed(1) : '--',
         hTime ? hTime.toFixed(1) : '--',
         resTime ? resTime.toFixed(1) : '--',
         i.outcome || '--',
-        i.status,
-        i.dataSource || i.source || 'SYSTEM'
-      ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(',');
+        i.status || '--',
+        i.dataSource || i.source || 'SYSTEM',
+        (i.media && i.media.length > 0) ? `${BASE_URL}${i.media[0]}` : '--'
+      ].map(v => `"${String(v).replace(/"/g, '""').replace(/\n/g, ' ')}"`);
     });
 
-    const csv = [headers.map(h => `"${h}"`).join(','), ...rows].join('\n');
+    const csv = [headers.map(h => `"${h}"`).join(','), ...rows.map(r => r.join(','))].join('\n');
     
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `ai_dispatch_historical_report_${new Date().getTime()}.csv`);
+    
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    link.setAttribute('download', `incident-reports-${dateStr}.csv`);
+    
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -136,7 +155,7 @@ const ReportsView = () => {
         </div>
         <button 
           onClick={handleExportCSV}
-          disabled={loading || filteredIncidents.length === 0}
+          disabled={loading}
           className="flex items-center gap-2 px-5 py-2.5 bg-brand-primary hover:bg-brand-primary-hover rounded text-[12px] font-bold text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest shrink-0"
         >
           <Download size={14} /> Export CSV
@@ -235,6 +254,7 @@ const ReportsView = () => {
                   <th className="px-6 py-4 font-bold">Location</th>
                   <th className="px-6 py-4 font-bold">Category</th>
                   <th className="px-6 py-4 font-bold">Severity</th>
+                  <th className="px-6 py-4 font-bold">Evidence</th>
                   <th className="px-6 py-4 font-bold text-right">Response Time</th>
                 </tr>
               </thead>
@@ -262,16 +282,26 @@ const ReportsView = () => {
                         <span className="text-[12px] font-semibold text-text-main">{inc.category.replace(/_/g, ' ')}</span>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 border rounded text-[9px] uppercase font-bold tracking-widest ${
-                          inc.severity >= 9 ? 'bg-emergency/10 border-emergency/20 text-emergency' :
-                          inc.severity >= 7 ? 'bg-warning/10 border-warning/20 text-warning' :
-                          'bg-info/10 border-info/20 text-info'
-                        }`}>Sev {inc.severity}</span>
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2 h-2 rounded-full ${inc.severity >= 9 ? 'bg-emergency shadow-[0_0_8px_rgba(239,68,68,0.5)]' : inc.severity >= 7 ? 'bg-warning shadow-[0_0_8px_rgba(245,158,11,0.5)]' : 'bg-info shadow-[0_0_8px_rgba(59,130,246,0.5)]'}`}></span>
+                          <span className="text-[12px] font-bold text-text-main">{inc.severityScore ? inc.severityScore.toFixed(1) : (inc.severity || '--')}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        {(inc.media && inc.media.length > 0) ? (
+                          <a href={`${BASE_URL}${inc.media[0]}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[10px] font-bold text-info hover:text-info/80 transition-colors uppercase tracking-widest bg-info/10 px-2 py-1 rounded w-fit">
+                            <ImageIcon size={12} /> View
+                          </a>
+                        ) : (
+                          <span className="text-[10px] text-text-disabled uppercase tracking-widest font-bold">None</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className={`text-[12px] font-bold ${rTime && rTime <= 10 ? 'text-operational' : rTime && rTime <= 15 ? 'text-warning' : rTime ? 'text-emergency' : 'text-text-muted'}`}>
-                          {rTime ? `${rTime.toFixed(1)}m` : '--'}
-                        </span>
+                        <div className="flex items-center justify-end gap-2">
+                          <span className={`text-[12px] font-bold ${rTime && rTime <= 10 ? 'text-operational' : rTime && rTime <= 15 ? 'text-warning' : rTime ? 'text-emergency' : 'text-text-muted'}`}>
+                            {rTime ? `${rTime.toFixed(1)}m` : '--'}
+                          </span>
+                        </div>
                       </td>
                     </motion.tr>
                   );

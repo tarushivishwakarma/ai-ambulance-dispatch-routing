@@ -1,7 +1,8 @@
 import axios from 'axios';
 import useDemoStore from '../demo/demoStore';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+export const BASE_URL = API_URL.replace(/\/api$/, '');
 // We determine if we are strictly in demo mode at startup based on missing critical env vars
 // For simplicity in this codebase, if VITE_API_URL is missing, we assume local dev, 
 // but we can look for a specific VITE_USE_DEMO_MODE flag or MONGODB presence.
@@ -48,10 +49,19 @@ class ApiService {
   }
 
   async createIncident(data, token) {
-    return this.execute(
-      () => axios.post(`${API_URL}/incidents`, data, { headers: { Authorization: `Bearer ${token}` } }),
-      () => this.demoStore.createIncident(data)
-    );
+    const headers = { Authorization: `Bearer ${token}` };
+    if (data instanceof FormData) {
+      headers['Content-Type'] = 'multipart/form-data';
+    }
+    try {
+      const res = await axios.post(`${API_URL}/incidents`, data, { headers });
+      const newIncident = res.data.data;
+      useDemoStore.setState(state => ({ incidents: [newIncident, ...state.incidents] }));
+      return res;
+    } catch (error) {
+      console.error("Live API Error (Create):", error);
+      throw new Error(error.response?.data?.message || 'Failed to create incident on live server.');
+    }
   }
 
   // --- Ambulances ---
@@ -71,44 +81,51 @@ class ApiService {
   }
 
   async assignAmbulance(incidentId, ambulanceId, token) {
-    return this.execute(
-      () => axios.post(`${API_URL}/dispatch/assign`, { incidentId, ambulanceId }, { headers: { Authorization: `Bearer ${token}` } }),
-      () => {
-        this.demoStore.assignAmbulance(incidentId, ambulanceId);
-        return { success: true };
-      }
-    );
+    try {
+      const res = await axios.post(`${API_URL}/dispatch/assign`, { incidentId, ambulanceId }, { headers: { Authorization: `Bearer ${token}` } });
+      useDemoStore.getState().assignAmbulance(incidentId, ambulanceId);
+      return res;
+    } catch (error) {
+      console.error("Live API Error (Assign):", error);
+      throw new Error(error.response?.data?.message || 'Failed to assign ambulance on live server.');
+    }
+  }
+
+  async updateIncidentStatus(incidentId, status, token) {
+    try {
+      const res = await axios.patch(`${API_URL}/incidents/${incidentId}/status`, { status }, { headers: { Authorization: `Bearer ${token}` } });
+      useDemoStore.getState().updateIncidentStatus(incidentId, status);
+      return res;
+    } catch (error) {
+      console.error("Live API Error (Status):", error);
+      throw new Error(error.response?.data?.message || 'Failed to update status on live server.');
+    }
   }
 
   // --- Analytics & Historical Data ---
   async getHistoricalIncidents(filters = {}, token) {
-    // Convert filters to query string
     const query = new URLSearchParams(filters).toString();
     try {
       const response = await axios.get(`${API_URL}/incidents/historical?${query}`, { headers: { Authorization: `Bearer ${token}` } });
-      return response.data.data || [];
+      const data = response.data.data || [];
+      if (data.length === 0) {
+        return this.demoStore.historicalIncidents || [];
+      }
+      return data;
     } catch (error) {
       console.error("Failed to fetch backend historical data, falling back to demo", error);
-      // Fallback dummy record just in case backend is completely unreachable
-      return this.demoStore.historicalIncidents || [
-        {
-          _id: "DUMMY-123",
-          incidentId: "DUMMY-123",
-          city: "New Delhi",
-          category: "ROAD_ACCIDENT",
-          severity: 8,
-          reportedAt: new Date().toISOString(),
-          status: "RESOLVED",
-          source: "SYNTHETIC_DEMO"
-        }
-      ];
+      return this.demoStore.historicalIncidents || [];
     }
   }
 
   async getAnalytics(token) {
     try {
       const response = await axios.get(`${API_URL}/analytics/overview`, { headers: { Authorization: `Bearer ${token}` } });
-      return response.data.data;
+      const data = response.data.data;
+      if (!data || Object.keys(data).length === 0 || (data.activeIncidents === 0 && data.totalResolved === 0)) {
+        return this.demoStore.getAnalytics();
+      }
+      return data;
     } catch (error) {
       console.error("Failed to fetch backend analytics, falling back to demo", error);
       return this.demoStore.getAnalytics();
@@ -117,10 +134,21 @@ class ApiService {
 
   // --- Road Conditions ---
   async getRoadConditions(token) {
-    return this.execute(
-      () => axios.get(`${API_URL}/roads`, { headers: { Authorization: `Bearer ${token}` } }),
-      () => this.demoStore.roadConditions || []
-    );
+    if (isSystemDemoMode) {
+      await new Promise(resolve => setTimeout(resolve, 600));
+      return this.demoStore.roadConditions || [];
+    }
+    try {
+      const response = await axios.get(`${API_URL}/roads`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = response.data.data;
+      if (!data || data.length === 0) {
+        return this.demoStore.roadConditions || [];
+      }
+      return data;
+    } catch (error) {
+      console.error("Live API Error:", error);
+      return this.demoStore.roadConditions || [];
+    }
   }
 }
 

@@ -17,9 +17,14 @@ const RoadConditions = () => {
     const fetchConditions = async () => {
       try {
         const data = await apiService.getRoadConditions();
-        setConditions(data);
+        if (data && data.length > 0) {
+          setConditions(data);
+        } else {
+          setConditions(useDemoStore.getState().roadConditions || []);
+        }
       } catch (err) {
         console.error(err);
+        setConditions(useDemoStore.getState().roadConditions || []);
       } finally {
         setLoading(false);
       }

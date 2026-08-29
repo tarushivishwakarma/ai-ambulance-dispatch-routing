@@ -115,9 +115,14 @@ const updateIncidentStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
     
+    const updateData = { status };
+    if (status === 'RESOLVED') {
+      updateData.resolvedAt = Date.now();
+    }
+
     const incident = await Incident.findByIdAndUpdate(
       req.params.id,
-      { status },
+      updateData,
       { new: true, runValidators: true }
     );
     

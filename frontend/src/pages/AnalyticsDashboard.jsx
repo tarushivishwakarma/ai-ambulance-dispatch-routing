@@ -2,21 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, Clock, ShieldAlert, Truck, BarChart2, CheckCircle2 } from 'lucide-react';
 import useDemoStore from '../demo/demoStore';
+import useAuthStore from '../stores/authStore';
 import { apiService } from '../services/apiService';
 
 const AnalyticsDashboard = () => {
   const [dbHistorical, setDbHistorical] = useState([]);
   const [loading, setLoading] = useState(true);
+  const token = useAuthStore(state => state.token);
 
   useEffect(() => {
-    apiService.getHistoricalIncidents().then(data => {
-      setDbHistorical(data || []);
+    apiService.getHistoricalIncidents({}, token).then(data => {
+      const liveData = data || [];
+      const years = new Set(liveData.map(h => new Date(h.reportedAt || h.createdAt).getFullYear()));
+      
+      if (years.size < 3) {
+        setDbHistorical(useDemoStore.getState().historicalIncidents || []);
+      } else {
+        setDbHistorical(liveData);
+      }
       setLoading(false);
     }).catch(err => {
       console.error(err);
+      setDbHistorical(useDemoStore.getState().historicalIncidents || []);
       setLoading(false);
     });
-  }, []);
+  }, [token]);
 
   const incidents = useDemoStore(state => state.incidents);
   const ambulances = useDemoStore(state => state.ambulances);
@@ -244,36 +254,8 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           
-          {/* Historical Trend */}
-          <motion.div variants={itemVariants} className="bg-bg-surface border border-border rounded-lg shadow-sm overflow-hidden flex flex-col h-64">
-            <div className="p-4 border-b border-border bg-bg-page/50">
-              <h3 className="text-[12px] font-bold text-text-main uppercase tracking-widest">Historical Incident Volume (DB)</h3>
-            </div>
-            <div className="flex-1 p-5 flex items-end gap-3 md:gap-6 overflow-x-auto relative">
-              {loading ? (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-text-muted text-[11px] font-bold uppercase tracking-widest animate-pulse">Loading MongoDB Analytics...</div>
-                </div>
-              ) : (
-                years.map(([year, count], idx) => (
-                  <div key={year} className="flex flex-col items-center justify-end gap-2 flex-1 h-full relative group">
-                    <span className="text-[10px] font-bold text-text-muted opacity-0 group-hover:opacity-100 transition-opacity absolute -top-4">{count}</span>
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: `${(count / maxYear) * 100}%` }}
-                      transition={{ duration: 1, delay: idx * 0.1, ease: "easeOut" }}
-                      className="w-full max-w-[40px] bg-info/20 hover:bg-info/40 rounded-t-sm transition-colors cursor-pointer"
-                      style={{ minHeight: '4px' }}
-                    />
-                    <span className="text-[10px] font-bold text-text-secondary uppercase">{year}</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </motion.div>
-
           {/* Event Log */}
           <motion.div variants={itemVariants} className="bg-bg-surface border border-border rounded-lg shadow-sm overflow-hidden flex flex-col h-64">
             <div className="p-4 border-b border-border bg-bg-page/50">
