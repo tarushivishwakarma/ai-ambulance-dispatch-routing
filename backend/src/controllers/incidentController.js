@@ -33,7 +33,8 @@ const createIncident = async (req, res, next) => {
 
     try {
       const axios = require('axios');
-      const aiRes = await axios.post('http://localhost:8000/api/ai/analyze', {
+      const aiServiceUrl = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+      const aiRes = await axios.post(`${aiServiceUrl}/api/ai/analyze`, {
         incidentId: incident._id.toString(),
         description: incident.description,
         category: incident.category
