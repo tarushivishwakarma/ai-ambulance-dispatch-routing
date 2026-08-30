@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Polyline } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import useDemoStore from '../demo/demoStore';
 
@@ -41,6 +40,14 @@ const hospitalIcon = new L.Icon({
 const MapUpdater = ({ activeCityFilter, incidents, ambulances, hospitals }) => {
   const map = useMap();
   const [centeredOn, setCenteredOn] = useState(null);
+
+  useEffect(() => {
+    // Force map to recalculate its size after container layout finishes
+    const timer = setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [map]);
 
   useEffect(() => {
     if (activeCityFilter === centeredOn) return;
@@ -96,10 +103,8 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
         <MapUpdater activeCityFilter={activeCityFilter} incidents={incidents} ambulances={ambulances} hospitals={hospitals} />
         
         <TileLayer
-          attribution='&copy; OpenStreetMap contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          className="map-tiles"
-          maxZoom={19}
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
         />
         
         {/* Routes */}
