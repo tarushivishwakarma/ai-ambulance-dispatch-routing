@@ -315,7 +315,7 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
         </header>
 
         <div className="relative z-10 flex-1 overflow-y-auto overflow-x-hidden w-full p-4 md:p-6 lg:p-8">
-          <div className="min-h-full w-full max-w-[1920px] mx-auto">
+          <div className="h-full w-full max-w-[1920px] mx-auto">
             {children || <Outlet />}
           </div>
         </div>

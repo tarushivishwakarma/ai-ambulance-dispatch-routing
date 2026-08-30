@@ -115,6 +115,7 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
         preferCanvas={true}
         style={{ height: '100%', width: '100%', background: '#E5E7EB' }}
         zoomControl={true}
+        scrollWheelZoom={false}
       >
         <MapUpdater activeCityFilter={activeCityFilter} incidents={incidents} ambulances={ambulances} hospitals={hospitals} />
         

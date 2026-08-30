@@ -31,6 +31,8 @@ const LandingPage = () => {
               autoPlay 
               muted 
               playsInline 
+              preload="auto"
+              poster="/images/landing-bg.jpg"
               onEnded={handleSkipIntro}
               className="w-full h-full object-cover"
             >

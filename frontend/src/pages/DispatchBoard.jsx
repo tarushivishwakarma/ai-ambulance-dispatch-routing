@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Radio, MapPin, ArrowRight, ShieldAlert, Truck, Crosshair, Filter, Activity, Clock } from 'lucide-react';
 import MapComponent from '../components/MapComponent';
 import useDemoStore from '../demo/demoStore';
+import { apiService } from '../services/apiService';
+import useAuthStore from '../stores/authStore';
 
 const CITIES = ['All India', 'New Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Lucknow', 'Jaipur', 'Ahmedabad', 'Pune', 'Bhopal', 'Indore', 'Patna', 'Chandigarh', 'Bhubaneswar', 'Guwahati', 'Kochi', 'Dehradun', 'Nagpur', 'Surat'];
 
@@ -38,8 +40,13 @@ const DispatchBoard = () => {
     return { ...d, incident: inc, ambulance: amb, hospital: hosp };
   }).filter(d => activeCityFilter === 'All India' || d.incident?.city === activeCityFilter);
 
-  const handleDispatch = (incidentId, ambulanceId) => {
-    assignAmbulance(incidentId, ambulanceId);
+  const handleDispatch = async (incidentId, ambulanceId) => {
+    try {
+      await apiService.assignAmbulance(incidentId, ambulanceId, useAuthStore.getState().token);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to assign ambulance.");
+    }
   };
 
   return (

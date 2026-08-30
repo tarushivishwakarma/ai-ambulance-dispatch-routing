@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MapComponent from '../components/MapComponent';
 import IncidentDetailsPanel from '../components/IncidentDetailsPanel';
 import useDemoStore from '../demo/demoStore';
+import { apiService } from '../services/apiService';
+import useAuthStore from '../stores/authStore';
 
 const CITIES = ['All India', 'New Delhi', 'Mumbai', 'Bengaluru', 'Hyderabad', 'Chennai', 'Kolkata', 'Lucknow', 'Jaipur', 'Ahmedabad', 'Pune', 'Bhopal', 'Indore', 'Patna', 'Chandigarh', 'Bhubaneswar', 'Guwahati', 'Kochi', 'Dehradun', 'Nagpur', 'Surat'];
 
@@ -36,12 +38,23 @@ const STATUS_ICON = (status) => ({
 
 const IncidentsList = () => {
   const allIncidents = useDemoStore(state => state.incidents);
+  const allAmbulances = useDemoStore(state => state.ambulances);
   const activeCityFilter = useDemoStore(state => state.activeCityFilter);
   const setCityFilter = useDemoStore(state => state.setCityFilter);
   const globalSelectedId = useDemoStore(state => state.selectedIncidentId);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [severityFilter, setSeverityFilter] = useState('ALL');
   const [selectedIncident, setSelectedIncident] = useState(null);
+
+  const handleDispatch = async (incidentId, ambulanceId, e) => {
+    e.stopPropagation();
+    try {
+      await apiService.assignAmbulance(incidentId, ambulanceId, useAuthStore.getState().token);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to assign ambulance.");
+    }
+  };
 
   useEffect(() => {
     if (globalSelectedId) {
@@ -195,6 +208,21 @@ const IncidentsList = () => {
                                 </span>
                               )}
                             </div>
+                            
+                            {['ACTIVE', 'PENDING'].includes(incident.status) && (
+                              <div className="mt-3">
+                                <button
+                                  onClick={(e) => {
+                                    const nearest = allAmbulances.find(a => a.status === 'AVAILABLE' && a.city === incident.city) || allAmbulances.find(a => a.status === 'AVAILABLE');
+                                    if (nearest) handleDispatch(incident._id, nearest._id, e);
+                                    else { e.stopPropagation(); alert("No units available"); }
+                                  }}
+                                  className="px-3 py-1.5 bg-operational text-white text-[10px] font-bold uppercase tracking-widest rounded transition-colors hover:bg-green-700 active:scale-95 w-max"
+                                >
+                                  Quick Assign Unit
+                                </button>
+                              </div>
+                            )}
                           </div>
 
                           {/* Status Block */}
