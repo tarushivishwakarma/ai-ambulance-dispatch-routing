@@ -201,13 +201,7 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
             <div className="relative">
               <button 
                 className="relative p-2 text-text-secondary hover:text-text-main transition-colors rounded-full hover:bg-bg-surface-secondary"
-                onClick={() => {
-                  const opening = !showNotifications;
-                  setShowNotifications(opening);
-                  if (opening) {
-                    useDemoStore.getState().markAllNotificationsRead();
-                  }
-                }}
+                onClick={() => setShowNotifications(!showNotifications)}
               >
                 <Bell size={18} />
                 {unread > 0 && (

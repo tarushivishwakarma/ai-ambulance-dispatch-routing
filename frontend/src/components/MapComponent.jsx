@@ -42,17 +42,29 @@ const MapUpdater = ({ activeCityFilter, incidents, ambulances, hospitals }) => {
   const [centeredOn, setCenteredOn] = useState(null);
 
   useEffect(() => {
-    // Force map to recalculate its size after container layout finishes
-    const timer = setTimeout(() => {
+    // Robust resize handling for desktop flex containers
+    const resizeObserver = new ResizeObserver(() => {
       map.invalidateSize();
-    }, 100);
-    return () => clearTimeout(timer);
+    });
+    
+    const container = map.getContainer();
+    if (container) {
+      resizeObserver.observe(container);
+      // Initial invalidation in case it started hidden
+      setTimeout(() => map.invalidateSize(), 100);
+      setTimeout(() => map.invalidateSize(), 500);
+    }
+    
+    return () => {
+      if (container) resizeObserver.unobserve(container);
+      resizeObserver.disconnect();
+    };
   }, [map]);
 
   useEffect(() => {
     if (activeCityFilter === centeredOn) return;
 
-    let targetCenter = [20.5937, 78.9629];
+    let targetCenter = [20.5937, 78.9629]; // India center
     let targetZoom = 4.8;
     let found = true;
 
@@ -101,16 +113,14 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
         zoomDelta={0.5}
         wheelPxPerZoomLevel={120}
         preferCanvas={true}
-        style={{ height: '100%', width: '100%', background: '#f8f9fa' }}
-        zoomControl={false}
+        style={{ height: '100%', width: '100%', background: '#E5E7EB' }}
+        zoomControl={true}
       >
         <MapUpdater activeCityFilter={activeCityFilter} incidents={incidents} ambulances={ambulances} hospitals={hospitals} />
         
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          updateWhenIdle={false}
-          updateWhenZooming={false}
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           keepBuffer={4}
         />
         
