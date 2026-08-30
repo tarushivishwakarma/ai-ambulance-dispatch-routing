@@ -201,7 +201,13 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
             <div className="relative">
               <button 
                 className="relative p-2 text-text-secondary hover:text-text-main transition-colors rounded-full hover:bg-bg-surface-secondary"
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={() => {
+                  const opening = !showNotifications;
+                  setShowNotifications(opening);
+                  if (opening) {
+                    useDemoStore.getState().markAllNotificationsRead();
+                  }
+                }}
               >
                 <Bell size={18} />
                 {unread > 0 && (
@@ -213,47 +219,88 @@ const DashboardLayout = ({ children, role = 'DISPATCHER' }) => {
               
               <AnimatePresence>
                 {showNotifications && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute right-0 mt-2 w-80 bg-bg-surface/80 backdrop-blur-md border border-border rounded-lg shadow-xl overflow-hidden z-[9999] flex flex-col"
-                  >
-                    <div className="p-3 border-b border-border bg-bg-page flex justify-between items-center">
-                      <span className="text-xs font-bold uppercase tracking-widest text-text-main">System Alerts</span>
-                      <span className="text-[10px] text-text-muted">{notifications.length} Total</span>
-                    </div>
-                    <div className="max-h-80 overflow-y-auto">
-                      {notifications.length === 0 ? (
-                        <div className="p-6 text-center text-text-muted text-xs">No active alerts</div>
-                      ) : (
-                        notifications.map(notif => (
-                          <div 
-                            key={notif.id} 
-                            onClick={() => {
-                              useDemoStore.getState().markNotificationRead(notif.id);
-                              if (notif.incidentId) {
-                                useDemoStore.getState().setSelectedIncidentId(notif.incidentId);
-                              }
-                              setShowNotifications(false);
-                            }}
-                            className={`p-3 border-b border-border last:border-0 cursor-pointer hover:bg-bg-surface-secondary transition-colors ${!notif.read ? 'bg-info/5' : ''}`}
+                  <>
+                    {/* Click-outside overlay to close */}
+                    <div 
+                      className="fixed inset-0 z-[9998]" 
+                      onClick={() => setShowNotifications(false)} 
+                    />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute right-0 mt-2 w-80 bg-bg-surface/80 backdrop-blur-md border border-border rounded-lg shadow-xl overflow-hidden z-[9999] flex flex-col"
+                    >
+                      <div className="p-3 border-b border-border bg-bg-page flex justify-between items-center">
+                        <span className="text-xs font-bold uppercase tracking-widest text-text-main">System Alerts</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-text-muted">{notifications.length} Total</span>
+                          {notifications.length > 0 && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                useDemoStore.getState().clearAllNotifications();
+                              }}
+                              className="text-[9px] font-bold uppercase tracking-wider text-emergency hover:text-emergency/80 transition-colors px-1.5 py-0.5 rounded hover:bg-emergency/10"
+                            >
+                              Clear All
+                            </button>
+                          )}
+                          <button
+                            onClick={() => setShowNotifications(false)}
+                            className="p-1 hover:bg-bg-surface-secondary rounded-full text-text-muted hover:text-text-main transition-colors"
                           >
-                            <div className="flex justify-between items-start mb-1">
-                              <span className={`text-[10px] font-bold uppercase tracking-wider ${!notif.read ? 'text-info' : 'text-text-muted'}`}>{notif.title}</span>
-                              <span className="text-[9px] text-text-disabled">
-                                {notif.timestamp && !isNaN(new Date(notif.timestamp).getTime())
-                                  ? new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                                  : 'Just now'}
-                              </span>
+                            <X size={14} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="max-h-80 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="p-6 text-center text-text-muted text-xs">No active alerts</div>
+                        ) : (
+                          notifications.map(notif => (
+                            <div 
+                              key={notif.id} 
+                              className={`group/notif p-3 border-b border-border last:border-0 cursor-pointer hover:bg-bg-surface-secondary transition-colors relative ${!notif.read ? 'bg-info/5' : ''}`}
+                            >
+                              <div 
+                                onClick={() => {
+                                  useDemoStore.getState().markNotificationRead(notif.id);
+                                  if (notif.incidentId) {
+                                    useDemoStore.getState().setSelectedIncidentId(notif.incidentId);
+                                  }
+                                  setShowNotifications(false);
+                                }}
+                                className="pr-6"
+                              >
+                                <div className="flex justify-between items-start mb-1">
+                                  <span className={`text-[10px] font-bold uppercase tracking-wider ${!notif.read ? 'text-info' : 'text-text-muted'}`}>{notif.title}</span>
+                                  <span className="text-[9px] text-text-disabled">
+                                    {notif.timestamp && !isNaN(new Date(notif.timestamp).getTime())
+                                      ? new Date(notif.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                      : 'Just now'}
+                                  </span>
+                                </div>
+                                <p className={`text-xs ${!notif.read ? 'text-text-main font-medium' : 'text-text-secondary'}`}>{notif.message}</p>
+                              </div>
+                              {/* Per-notification close button */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  useDemoStore.getState().dismissNotification(notif.id);
+                                }}
+                                className="absolute top-3 right-2 p-0.5 rounded-full text-text-disabled hover:text-emergency hover:bg-emergency/10 transition-colors opacity-0 group-hover/notif:opacity-100"
+                                title="Dismiss notification"
+                              >
+                                <X size={12} />
+                              </button>
                             </div>
-                            <p className={`text-xs ${!notif.read ? 'text-text-main font-medium' : 'text-text-secondary'}`}>{notif.message}</p>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </motion.div>
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  </>
                 )}
               </AnimatePresence>
             </div>

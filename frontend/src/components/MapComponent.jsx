@@ -100,6 +100,7 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
         zoomSnap={0.5}
         zoomDelta={0.5}
         wheelPxPerZoomLevel={120}
+        preferCanvas={true}
         style={{ height: '100%', width: '100%', background: '#f8f9fa' }}
         zoomControl={false}
       >
@@ -108,6 +109,9 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+          updateWhenIdle={false}
+          updateWhenZooming={false}
+          keepBuffer={4}
         />
         
         {/* Routes */}

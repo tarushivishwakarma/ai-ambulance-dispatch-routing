@@ -113,6 +113,22 @@ const useDemoStore = create((set, get) => ({
     }));
   },
 
+  dismissNotification: (id) => {
+    set((state) => ({
+      notifications: state.notifications.filter(n => n.id !== id)
+    }));
+  },
+
+  clearAllNotifications: () => {
+    set({ notifications: [] });
+  },
+
+  markAllNotificationsRead: () => {
+    set((state) => ({
+      notifications: state.notifications.map(n => ({ ...n, read: true }))
+    }));
+  },
+
   startSimulation: () => {
     const { simulationInterval } = get();
     if (simulationInterval) return; // Already running

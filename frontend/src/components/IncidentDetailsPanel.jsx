@@ -108,7 +108,18 @@ const IncidentDetailsPanel = ({ incident, onClose }) => {
 
   return (
     <AnimatePresence>
+      {/* Backdrop overlay - click to close */}
+      <motion.div
+        key="backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 bg-black/20 backdrop-blur-[2px] z-[99]"
+        onClick={onClose}
+      />
       <motion.div 
+        key="panel"
         initial={{ x: '100%', opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: '100%', opacity: 0 }}
