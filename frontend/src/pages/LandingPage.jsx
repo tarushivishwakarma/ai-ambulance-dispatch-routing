@@ -80,9 +80,6 @@ const LandingPage = () => {
           <span className="text-text-main text-sm font-bold tracking-widest uppercase">AI Dispatch</span>
         </div>
         <div className="flex items-center gap-6">
-          <Link to="/" className="text-[11px] font-bold tracking-widest uppercase text-text-muted hover:text-text-main transition-colors">
-            Home
-          </Link>
           <Link to="/report" className="text-[11px] font-bold tracking-widest uppercase text-text-muted hover:text-text-main transition-colors">
             Report Emergency
           </Link>

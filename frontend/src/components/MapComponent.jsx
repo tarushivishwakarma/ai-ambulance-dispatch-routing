@@ -52,8 +52,8 @@ const MapUpdater = ({ activeCityFilter, incidents, ambulances, hospitals }) => {
   useEffect(() => {
     if (activeCityFilter === centeredOn) return;
 
-    let targetCenter = [22.0, 79.0];
-    let targetZoom = 4.5;
+    let targetCenter = [20.5937, 78.9629];
+    let targetZoom = 4.8;
     let found = true;
 
     if (activeCityFilter !== 'All India' && activeCityFilter !== '') {
@@ -95,9 +95,12 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
   return (
     <div className="h-full w-full relative z-0">
       <MapContainer 
-        center={[22.0, 79.0]} 
-        zoom={4.5} 
-        style={{ height: '100%', width: '100%', background: '#0a1128' }}
+        center={[20.5937, 78.9629]} 
+        zoom={4.8}
+        zoomSnap={0.5}
+        zoomDelta={0.5}
+        wheelPxPerZoomLevel={120}
+        style={{ height: '100%', width: '100%', background: '#f8f9fa' }}
         zoomControl={false}
       >
         <MapUpdater activeCityFilter={activeCityFilter} incidents={incidents} ambulances={ambulances} hospitals={hospitals} />
