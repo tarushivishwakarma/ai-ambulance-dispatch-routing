@@ -46,7 +46,7 @@ const MapUpdater = ({ activeCityFilter, incidents, ambulances, hospitals }) => {
     if (activeCityFilter === centeredOn) return;
 
     let targetCenter = [22.0, 79.0];
-    let targetZoom = 5;
+    let targetZoom = 4.5;
     let found = true;
 
     if (activeCityFilter !== 'All India' && activeCityFilter !== '') {
@@ -67,7 +67,10 @@ const MapUpdater = ({ activeCityFilter, incidents, ambulances, hospitals }) => {
     }
 
     if (found) {
-      map.setView(targetCenter, targetZoom);
+      map.flyTo(targetCenter, targetZoom, {
+        animate: true,
+        duration: 1.5
+      });
       setCenteredOn(activeCityFilter);
     }
   }, [activeCityFilter, centeredOn, incidents, ambulances, hospitals, map]);
@@ -86,7 +89,7 @@ const MapComponent = ({ incidents = [], ambulances = [], hospitals = [] }) => {
     <div className="h-full w-full relative z-0">
       <MapContainer 
         center={[22.0, 79.0]} 
-        zoom={5} 
+        zoom={4.5} 
         style={{ height: '100%', width: '100%', background: '#0a1128' }}
         zoomControl={false}
       >
